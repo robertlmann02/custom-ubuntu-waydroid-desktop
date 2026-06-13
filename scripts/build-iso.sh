@@ -10,6 +10,7 @@ lb config \
   --architectures amd64 \
   --binary-images iso-hybrid \
   --bootloader syslinux \
+  --syslinux-theme live-build \
   --initramfs casper \
   --archive-areas "main restricted universe multiverse" \
   --parent-mirror-bootstrap http://archive.ubuntu.com/ubuntu/ \
