@@ -1,0 +1,26 @@
+#!/bin/bash
+set -euo pipefail
+MARKER="$HOME/.config/custom-desktop-first-login.done"
+[ -e "$MARKER" ] && exit 0
+mkdir -p "$HOME/.config" "$HOME/.local/share/keyrings"
+chmod 700 "$HOME/.local/share/keyrings"
+
+# Initialize GNOME Keyring with an empty password. Empty stdin is intentional.
+if command -v gnome-keyring-daemon >/dev/null 2>&1; then
+  eval "$(printf '\n' | gnome-keyring-daemon --start --components=secrets,pkcs11,ssh --unlock 2>/dev/null | sed 's/^/export /')" || true
+  if command -v secret-tool >/dev/null 2>&1; then
+    printf 'ok' | secret-tool store --label='Blank keyring initialization check' custom-keyring-init true 2>/dev/null || true
+    secret-tool clear custom-keyring-init true 2>/dev/null || true
+  fi
+fi
+
+# Apply desktop defaults in the real user session.
+gsettings set org.gnome.desktop.interface gtk-theme 'ZorinBlue-Dark' || true
+gsettings set org.gnome.desktop.interface icon-theme 'ZorinBlue-Dark' || true
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' || true
+gsettings set org.gnome.desktop.wm.preferences theme 'ZorinBlue-Dark' || true
+gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close' || true
+xdg-settings set default-web-browser google-chrome.desktop || true
+xdg-mime default google-chrome.desktop text/html x-scheme-handler/http x-scheme-handler/https || true
+
+touch "$MARKER"

@@ -1,0 +1,51 @@
+#!/bin/bash
+set -euo pipefail
+export DEBIAN_FRONTEND=noninteractive
+
+# Keep Snap out even if a dependency tries to suggest it.
+apt-mark hold snapd gnome-software-plugin-snap firefox || true
+rm -rf /snap /var/snap /var/lib/snapd /var/cache/snapd /home/*/snap || true
+
+# Install Zorin theme/icon assets from upstream open repositories.
+work=/tmp/custom-zorin-look
+rm -rf "$work"
+mkdir -p "$work"
+git clone --depth=1 https://github.com/ZorinOS/zorin-desktop-themes.git "$work/zorin-desktop-themes"
+git clone --depth=1 https://github.com/ZorinOS/zorin-icon-themes.git "$work/zorin-icon-themes"
+mkdir -p /usr/share/themes /usr/share/icons
+cp -a "$work"/zorin-desktop-themes/Zorin*-Light "$work"/zorin-desktop-themes/Zorin*-Dark /usr/share/themes/ || true
+cp -a "$work"/zorin-icon-themes/Zorin* /usr/share/icons/ || true
+gtk-update-icon-cache -q -f /usr/share/icons/ZorinBlue-Dark || true
+rm -rf "$work"
+
+# System Flatpak/Flathub + Bottles for Windows-app workflow.
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo || true
+flatpak install --system -y flathub com.usebottles.bottles || true
+
+# Default browser selection.
+update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/google-chrome-stable 200 || true
+update-alternatives --install /usr/bin/gnome-www-browser gnome-www-browser /usr/bin/google-chrome-stable 200 || true
+update-alternatives --set x-www-browser /usr/bin/google-chrome-stable || true
+update-alternatives --set gnome-www-browser /usr/bin/google-chrome-stable || true
+
+# DConf defaults for installed users.
+mkdir -p /etc/dconf/profile /etc/dconf/db/local.d
+cat >/etc/dconf/profile/user <<'DCONF_PROFILE'
+user-db:user
+system-db:local
+DCONF_PROFILE
+cat >/etc/dconf/db/local.d/00-custom-desktop <<'DCONF'
+[org/gnome/desktop/interface]
+gtk-theme='ZorinBlue-Dark'
+icon-theme='ZorinBlue-Dark'
+color-scheme='prefer-dark'
+
+[org/gnome/desktop/wm/preferences]
+theme='ZorinBlue-Dark'
+button-layout='appmenu:minimize,maximize,close'
+
+[org/gnome/shell]
+disable-user-extensions=false
+favorite-apps=['google-chrome.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'steam.desktop', 'org.gnome.Settings.desktop']
+DCONF
+dconf update || true

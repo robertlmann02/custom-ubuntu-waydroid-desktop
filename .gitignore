@@ -1,0 +1,13 @@
+.cache/
+out/
+live-image-*.hybrid.iso
+*.log
+*.buildinfo
+*.contents
+*.packages
+config/binary
+config/bootstrap
+config/chroot
+config/common
+config/source
+.cache

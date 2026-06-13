@@ -1,0 +1,16 @@
+Generated from the source workstation inventory. This file intentionally lists generic package/config state only, not user data or secrets.
+## Core package versions
+flatpak	1.16.6-1
+gdm3	50.0-0ubuntu1
+gnome-keyring	50.0-1
+gnome-shell	50.1-0ubuntu1
+google-chrome-stable	149.0.7827.114-1
+microsoft-edge-stable	149.0.4022.69-1
+waydroid	1.6.2
+wine	10.0~repack-12ubuntu1
+winetricks	20250102-1build1
+
+## GNOME theme defaults observed
+'ZorinBlue-Dark'
+'ZorinBlue-Dark'
+['web-search-provider@ubuntu.com', 'arcmenu@arcmenu.com', 'appindicatorsupport@rgcjonas.gmail.com', 'blur-my-shell@aunetx', 'user-theme@gnome-shell-extensions.gcampax.github.com', 'dash-to-panel@jderose9.github.com']

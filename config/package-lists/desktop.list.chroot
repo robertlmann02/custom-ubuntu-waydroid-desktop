@@ -1,0 +1,46 @@
+# Core live/desktop stack
+linux-generic
+casper
+systemd-sysv
+sudo
+network-manager
+xorg
+gdm3
+gnome-shell
+gnome-session
+gnome-terminal
+nautilus
+gnome-control-center
+gnome-tweaks
+gnome-shell-extension-prefs
+gnome-browser-connector
+dconf-cli
+libnotify-bin
+
+# Browsers and app platforms
+google-chrome-stable
+microsoft-edge-stable
+flatpak
+gnome-software
+gnome-software-plugin-flatpak
+
+# Android/Windows app support
+waydroid
+wine
+winetricks
+
+# Keyring, secrets, and utilities
+gnome-keyring
+gnome-keyring-pkcs11
+libpam-gnome-keyring
+libsecret-tools
+seahorse
+curl
+wget
+git
+jq
+unzip
+ca-certificates
+gnupg
+lsb-release
+software-properties-common
