@@ -10,7 +10,7 @@ A reproducible Ubuntu-based live desktop image configured like the source GNOME 
 - Wine, Winetricks, Flatpak, Bottles support for Windows apps
 - GNOME Keyring installed with a blank default keyring password initialized at first login
 
-This repository intentionally stores build scripts and generic desktop defaults only. It does **not** store user data, browser profiles, SSH keys, tokens, passwords, or machine-specific secrets.
+The look is built around a dark Zorin-inspired GNOME experience: Zorin Blue Dark GTK and icon themes, a bottom panel, ArcMenu-style application launcher, app indicators, and subtle shell effects for a familiar Windows-like desktop layout while keeping the Ubuntu base.
 
 ## Build
 
