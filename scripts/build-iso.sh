@@ -19,7 +19,7 @@ lb config \
   --mirror-bootstrap http://archive.ubuntu.com/ubuntu/ \
   --mirror-chroot http://archive.ubuntu.com/ubuntu/ \
   --mirror-binary http://archive.ubuntu.com/ubuntu/ \
-  --security true \
+  --security false \
   --apt-recommends true \
   --memtest none \
   --iso-application "Custom Ubuntu Waydroid Desktop" \
