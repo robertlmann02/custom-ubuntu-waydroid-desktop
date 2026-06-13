@@ -12,6 +12,7 @@ lb config \
   --bootloader syslinux \
   --syslinux-theme live-build \
   --initramfs casper \
+  --initsystem systemd \
   --archive-areas "main restricted universe multiverse" \
   --parent-mirror-bootstrap http://archive.ubuntu.com/ubuntu/ \
   --parent-mirror-chroot http://archive.ubuntu.com/ubuntu/ \
