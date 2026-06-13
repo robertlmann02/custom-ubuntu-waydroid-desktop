@@ -3,9 +3,9 @@ set -e
 # Ubuntu 26.04 live-build still tries to unpack gfxboot-theme-ubuntu/bootlogo.tar.gz
 # even though that package no longer exists. Provide a minimal bootlogo archive so
 # lb_binary_syslinux can finish with the live-build syslinux theme.
-mkdir -p /usr/share/gfxboot-theme-ubuntu /tmp/deuce-gfxboot
-printf '07070100000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000b00000000TRAILER!!!\000000000' > /tmp/deuce-gfxboot/bootlogo
+mkdir -p /usr/share/gfxboot-theme-ubuntu /tmp/custom-gfxboot
+printf '07070100000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000b00000000TRAILER!!!\000000000' > /tmp/custom-gfxboot/bootlogo
 # Ensure the cpio stream is padded to a 4-byte boundary.
-printf '\000\000\000' >> /tmp/deuce-gfxboot/bootlogo
-tar -C /tmp/deuce-gfxboot -czf /usr/share/gfxboot-theme-ubuntu/bootlogo.tar.gz bootlogo
-rm -rf /tmp/deuce-gfxboot
+printf '\000\000\000' >> /tmp/custom-gfxboot/bootlogo
+tar -C /tmp/custom-gfxboot -czf /usr/share/gfxboot-theme-ubuntu/bootlogo.tar.gz bootlogo
+rm -rf /tmp/custom-gfxboot

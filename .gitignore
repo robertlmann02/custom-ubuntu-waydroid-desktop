@@ -10,3 +10,16 @@ live-image-*.hybrid.iso
 *.buildlog
 *.packages
 *.contents
+
+# live-build generated state/artifacts
+config/binary
+config/bootstrap
+config/chroot
+config/common
+config/source
+chroot.*
+binary.hybrid.iso
+binary.hybrid.iso.zsync.xz
+out/*.iso
+out/*.sha256
+out/*.zsync*
