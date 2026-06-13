@@ -26,6 +26,7 @@ lb config \
   --iso-application "Custom Ubuntu Waydroid Desktop" \
   --iso-publisher "Custom Ubuntu Waydroid Desktop" \
   --iso-volume "CUSTOM_UBUNTU" \
+  --source false \
   --checksums sha256
 sudo lb build 2>&1 | tee out/build.log
 ISO=$(ls -1t live-image-amd64.hybrid.iso 2>/dev/null | head -1)
