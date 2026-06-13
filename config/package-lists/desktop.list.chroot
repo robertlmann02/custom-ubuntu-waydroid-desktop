@@ -44,3 +44,4 @@ ca-certificates
 gnupg
 lsb-release
 software-properties-common
+syslinux-utils
