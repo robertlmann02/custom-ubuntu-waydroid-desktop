@@ -9,7 +9,7 @@ lb config \
   --distribution resolute \
   --architectures amd64 \
   --binary-images iso-hybrid \
-  --bootloader grub \
+  --bootloader syslinux \
   --initramfs casper \
   --archive-areas "main restricted universe multiverse" \
   --parent-mirror-bootstrap http://archive.ubuntu.com/ubuntu/ \
