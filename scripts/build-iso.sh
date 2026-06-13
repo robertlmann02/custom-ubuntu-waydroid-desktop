@@ -5,7 +5,7 @@ cd "$ROOT"
 mkdir -p out
 sudo lb clean --purge || true
 lb config \
-  --mode ubuntu \
+  --mode debian \
   --distribution resolute \
   --architectures amd64 \
   --binary-images iso-hybrid \
