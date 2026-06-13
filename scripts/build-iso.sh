@@ -11,7 +11,7 @@ lb config \
   --binary-images iso-hybrid \
   --bootloader syslinux \
   --syslinux-theme live-build \
-  --initramfs casper \
+  --initramfs live-boot \
   --initsystem systemd \
   --archive-areas "main restricted universe multiverse" \
   --parent-mirror-bootstrap http://archive.ubuntu.com/ubuntu/ \
