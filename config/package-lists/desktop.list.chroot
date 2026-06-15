@@ -23,6 +23,7 @@ microsoft-edge-stable
 flatpak
 gnome-software
 gnome-software-plugin-flatpak
+geary
 
 # Android/Windows app support
 waydroid
@@ -45,3 +46,8 @@ gnupg
 lsb-release
 software-properties-common
 syslinux-utils
+plymouth-label
+
+# Default productivity/gaming launchers are installed in the branding hook:
+# - steam-installer needs i386 multiarch enabled first
+# - onlyoffice-desktopeditors comes from the ONLYOFFICE repo

@@ -28,8 +28,15 @@ lb config \
   --iso-volume "CUSTOM_UBUNTU" \
   --source false \
   --checksums sha256
+set +e
 sudo lb build 2>&1 | tee out/build.log
-ISO=$(ls -1t live-image-amd64.hybrid.iso 2>/dev/null | head -1)
+build_status=${PIPESTATUS[0]}
+set -e
+ISO=$(ls -1t live-image-amd64.hybrid.iso binary.hybrid.iso 2>/dev/null | head -1)
+if [ "$build_status" -ne 0 ] && [ -z "${ISO:-}" ]; then
+  echo "live-build failed before producing an ISO" >&2
+  exit "$build_status"
+fi
 if [ -z "${ISO:-}" ]; then
   echo "No ISO produced" >&2
   exit 1
