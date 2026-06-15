@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" role="img" aria-label="Custom Ubuntu Desktop minimal boot splash">
-  <rect width="1920" height="1080" fill="#070a10"/>
-  <polygon points="960,360 1095,438 1095,594 960,672 825,594 825,438" fill="#101824" stroke="#ff7a1a" stroke-width="16" stroke-linejoin="round"/>
-  <path d="M895 575 L895 445 L960 515 L1025 445 L1025 575" fill="none" stroke="#e7ecf3" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect width="1920" height="1080" fill="#020617"/>
+  <polygon points="960,360 1095,438 1095,594 960,672 825,594 825,438" fill="#1c71d8" stroke="#99c1f1" stroke-width="16" stroke-linejoin="round"/>
+  <path d="M895 575 L895 445 L960 515 L1025 445 L1025 575" fill="none" stroke="#ffffff" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
   <text x="960" y="755" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-size="42" font-weight="600" fill="#e7ecf3">Custom Ubuntu Desktop</text>
 </svg>

@@ -10,7 +10,7 @@ A reproducible Ubuntu-based live desktop image configured like the source GNOME 
 - Geary Mail as the default mail app (`mailto:` and message files)
 - Steam and ONLYOFFICE Desktop Editors prepackaged
 - Custom GNOME theme defaults with bottom panel/start menu, app indicators, and blur/transparency extensions
-- Generic boot logo assets and Plymouth/GRUB boot branding support
+- Blue generic boot logo assets and Plymouth/GRUB boot branding support
 - Wine, Winetricks, Flatpak, Bottles support for Windows apps
 - GNOME Keyring installed with a blank default keyring password initialized at first login
 
@@ -40,7 +40,7 @@ sudo ./scripts/write-usb.sh out/custom-ubuntu-waydroid-desktop-amd64.iso /dev/sd
 
 ## Branding and defaults
 
-The build recipe includes generic, public-safe boot branding assets under:
+The build recipe includes blue generic, public-safe boot branding assets under:
 
 ```text
 config/includes.chroot/usr/local/share/custom-boot-branding/
