@@ -9,7 +9,7 @@ A reproducible Ubuntu-based live desktop image configured like the source GNOME 
 - Microsoft Edge preinstalled
 - Geary Mail as the default mail app (`mailto:` and message files)
 - Steam and ONLYOFFICE Desktop Editors prepackaged
-- Custom GNOME theme defaults with bottom Zorin-style taskbar, flush-left Menu button, no Show Apps gap, app indicators, and blur/transparency extensions
+- GNOME Tweaks and shell extension preferences included for post-install desktop tuning
 - Blue generic boot logo assets and Plymouth/GRUB boot branding support
 - Wine, Winetricks, Flatpak, Bottles support for Windows apps
 - GNOME Keyring installed with a blank default keyring password initialized at first login
