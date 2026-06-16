@@ -32,7 +32,7 @@ set +e
 sudo lb build 2>&1 | tee out/build.log
 build_status=${PIPESTATUS[0]}
 set -e
-ISO=$(ls -1t live-image-amd64.hybrid.iso binary.hybrid.iso 2>/dev/null | head -1)
+ISO=$(find . -maxdepth 1 -type f \( -name 'live-image-amd64.hybrid.iso' -o -name 'binary.hybrid.iso' \) -printf '%T@ %p\n' 2>/dev/null | sort -nr | awk 'NR==1 {print $2}')
 if [ "$build_status" -ne 0 ] && [ -z "${ISO:-}" ]; then
   echo "live-build failed before producing an ISO" >&2
   exit "$build_status"
@@ -41,5 +41,6 @@ if [ -z "${ISO:-}" ]; then
   echo "No ISO produced" >&2
   exit 1
 fi
-cp -f "$ISO" out/custom-ubuntu-waydroid-desktop-amd64.iso
+sudo cp -f "$ISO" out/custom-ubuntu-waydroid-desktop-amd64.iso
+sudo chown "$(id -u):$(id -g)" out/custom-ubuntu-waydroid-desktop-amd64.iso
 sha256sum out/custom-ubuntu-waydroid-desktop-amd64.iso | tee out/custom-ubuntu-waydroid-desktop-amd64.iso.sha256
