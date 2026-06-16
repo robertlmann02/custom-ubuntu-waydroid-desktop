@@ -1,5 +1,10 @@
 # Custom Ubuntu Waydroid Desktop
 
+<p align="center">
+  <img src=".github/assets/mannindustries-logo.png" alt="MannIndustries logo" width="420">
+</p>
+
+
 A reproducible Ubuntu-based live desktop image configured like the source GNOME workstation:
 
 - Snap-free by policy (`snapd` and GNOME Software Snap plugin are pinned out)
