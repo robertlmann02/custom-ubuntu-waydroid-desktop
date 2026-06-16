@@ -9,7 +9,7 @@ A reproducible Ubuntu-based live desktop image configured like the source GNOME 
 - Microsoft Edge preinstalled
 - Geary Mail as the default mail app (`mailto:` and message files)
 - Steam and ONLYOFFICE Desktop Editors prepackaged
-- Custom GNOME theme defaults with bottom panel/start menu, app indicators, and blur/transparency extensions
+- Custom GNOME theme defaults with bottom Zorin-style taskbar, flush-left Menu button, no Show Apps gap, app indicators, and blur/transparency extensions
 - Blue generic boot logo assets and Plymouth/GRUB boot branding support
 - Wine, Winetricks, Flatpak, Bottles support for Windows apps
 - GNOME Keyring installed with a blank default keyring password initialized at first login
@@ -46,4 +46,4 @@ The build recipe includes blue generic, public-safe boot branding assets under:
 config/includes.chroot/usr/local/share/custom-boot-branding/
 ```
 
-The desktop hook installs those assets as a Plymouth theme and GRUB background, sets Geary as the default mail handler, and applies GNOME shell defaults for the bottom panel/start-menu workflow. Replace the generic boot images before building if you need organization-specific branding.
+The desktop hook installs those assets as a Plymouth theme and GRUB background, sets Geary as the default mail handler, and applies GNOME shell defaults for the bottom Zorin-style taskbar/start-menu workflow, including the flush-left Menu button and hidden Show Apps slot. Replace the generic boot images before building if you need organization-specific branding.

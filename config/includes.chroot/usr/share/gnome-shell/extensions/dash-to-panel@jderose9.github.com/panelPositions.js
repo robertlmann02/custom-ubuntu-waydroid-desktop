@@ -40,7 +40,7 @@ export const MIDDLE = 'MIDDLE'
 export const END = 'END'
 
 export const defaults = [
-  { element: SHOW_APPS_BTN, visible: true, position: STACKED_TL },
+  { element: SHOW_APPS_BTN, visible: false, position: STACKED_TL },
   { element: ACTIVITIES_BTN, visible: false, position: STACKED_TL },
   { element: LEFT_BOX, visible: true, position: STACKED_TL },
   { element: TASKBAR, visible: true, position: STACKED_TL },

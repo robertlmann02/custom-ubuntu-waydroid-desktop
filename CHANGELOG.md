@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Update installed desktop defaults to match the latest source-desktop taskbar: bottom Zorin-blue panel, 48px height, flush-left Menu button, and no reserved Show Apps gap.
 - Switch the bundled public boot logo artwork to the blue desktop mark used by the ISO branding.
 - Add Geary Mail as the default mail handler for `mailto:` links and RFC 822 message files.
 - Prepackage Steam and ONLYOFFICE Desktop Editors in the custom desktop build.
