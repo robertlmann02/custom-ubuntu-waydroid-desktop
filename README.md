@@ -18,6 +18,7 @@ A reproducible Ubuntu-based live desktop image configured like the source GNOME 
 - Steam and ONLYOFFICE Desktop Editors prepackaged
 - GNOME Tweaks and shell extension preferences included for post-install desktop tuning
 - MI PC boot logo assets and Plymouth/GRUB boot branding support
+- Hybrid BIOS plus UEFI Secure Boot-capable USB boot media using signed Ubuntu shim/GRUB
 - Wine, Winetricks, Flatpak, Bottles support for Windows apps
 - GNOME Keyring installed with a blank default keyring password initialized at first login
 
@@ -29,11 +30,23 @@ On an Ubuntu host with sudo:
 
 ```bash
 sudo apt-get update
-sudo apt-get install -y live-build isolinux syslinux-utils grub-pc-bin xorriso squashfs-tools debootstrap mtools dosfstools curl jq git
+sudo apt-get install -y live-build isolinux syslinux-utils grub-pc-bin grub-efi-amd64-signed shim-signed xorriso squashfs-tools debootstrap mtools dosfstools curl jq git
 ./scripts/build-iso.sh
 ```
 
 Output ISO is written under `out/`.
+
+
+## Boot compatibility
+
+`scripts/build-iso.sh` post-processes the live-build ISO into hybrid USB media with:
+
+- Legacy BIOS/CSM boot through ISOLINUX
+- UEFI removable-media boot path at `/EFI/BOOT/BOOTX64.EFI`
+- Signed Ubuntu shim and signed GRUB EFI loader for Secure Boot-enabled machines
+- The signed Ubuntu kernel from the live image loaded by GRUB
+
+Secure Boot still depends on the target firmware trusting the standard Microsoft/Canonical Secure Boot chain.
 
 ## Write to USB
 

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add UEFI Secure Boot-capable USB boot support with signed Ubuntu shim/GRUB, visible `/EFI/BOOT/BOOTX64.EFI`, and an El Torito EFI system partition while preserving legacy ISOLINUX boot.
 - Add ClamAV/ClamTK malware protection plus rkhunter/chkrootkit rootkit scanning to the ISO recipe, with automatic low-priority quick/full/rootkit scan timers and quarantine/log paths.
 - Add Rhythmbox Music as the default music player for common audio file types.
 - Refresh the bundled boot artwork to the latest MI PC no-square radial-glow logo used by the current desktop builds.
