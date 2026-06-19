@@ -26,6 +26,13 @@ gnome-software-plugin-flatpak
 geary
 rhythmbox
 
+# Malware and rootkit protection
+clamav
+clamav-daemon
+clamtk
+rkhunter
+chkrootkit
+
 # Android/Windows app support
 waydroid
 wine

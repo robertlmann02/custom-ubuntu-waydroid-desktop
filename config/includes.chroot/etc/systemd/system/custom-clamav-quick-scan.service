@@ -1,0 +1,10 @@
+[Unit]
+Description=Custom desktop ClamAV quick scan
+Wants=clamav-freshclam.service
+After=clamav-freshclam.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/custom-security-scan quick
+Nice=15
+IOSchedulingClass=idle

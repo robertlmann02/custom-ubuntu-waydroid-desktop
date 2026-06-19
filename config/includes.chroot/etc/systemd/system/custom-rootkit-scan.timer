@@ -1,0 +1,10 @@
+[Unit]
+Description=Run Custom desktop rootkit scan weekly
+
+[Timer]
+OnCalendar=Sun *-*-* 05:30:00
+Persistent=true
+RandomizedDelaySec=1h
+
+[Install]
+WantedBy=timers.target

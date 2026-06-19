@@ -18,17 +18,33 @@ cp -a "$work"/zorin-icon-themes/Zorin* /usr/share/icons/ || true
 gtk-update-icon-cache -q -f /usr/share/icons/ZorinBlue-Dark || true
 rm -rf "$work"
 
-# Install requested default apps: Steam, ONLYOFFICE, Geary Mail, and Rhythmbox Music.
+# Install requested default apps and security tools.
 # Steam needs i386 multiarch before apt can resolve steam-libs-i386.
 dpkg --add-architecture i386 || true
 apt-get update || true
-apt-get install -y steam-installer onlyoffice-desktopeditors geary rhythmbox
+apt-get install -y \
+  steam-installer \
+  onlyoffice-desktopeditors \
+  geary \
+  rhythmbox \
+  clamav \
+  clamav-daemon \
+  clamtk \
+  rkhunter \
+  chkrootkit
 
 # System Flatpak/Flathub is configured, but Bottles is not preinstalled now that
 # Steam + ONLYOFFICE are default apps; keeping the Flatpak runtimes out prevents
 # filesystem.squashfs from exceeding ISO-9660's 4 GiB file limit. Wine remains
 # installed for Windows-app workflow.
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo || true
+
+# Automatic malware/rootkit protection. Services are enabled for installed systems;
+# the timers run low-priority scans and avoid large game/cache paths.
+chmod 0755 /usr/local/sbin/custom-security-scan || true
+systemctl enable clamav-freshclam.service || true
+systemctl enable clamav-daemon.service clamav-daemon.socket || true
+systemctl enable custom-clamav-quick-scan.timer custom-clamav-full-scan.timer custom-rootkit-scan.timer || true
 
 # Default browser selection.
 update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/google-chrome-stable 200 || true

@@ -14,6 +14,7 @@ A reproducible Ubuntu-based live desktop image configured like the source GNOME 
 - Microsoft Edge preinstalled
 - Geary Mail as the default mail app (`mailto:` and message files)
 - Rhythmbox Music as the default music app for common audio files
+- ClamAV/ClamTK antivirus plus rkhunter/chkrootkit rootkit scanning, with automatic low-priority timers
 - Steam and ONLYOFFICE Desktop Editors prepackaged
 - GNOME Tweaks and shell extension preferences included for post-install desktop tuning
 - MI PC boot logo assets and Plymouth/GRUB boot branding support
@@ -53,3 +54,16 @@ config/includes.chroot/usr/local/share/custom-boot-branding/
 ```
 
 The desktop hook installs those assets as a Plymouth theme and GRUB background, sets Geary as the default mail handler, sets Rhythmbox as the default music player, and applies GNOME shell defaults for the bottom Zorin-style taskbar/start-menu workflow, including the flush-left Menu button and hidden Show Apps slot. Replace the bundled boot images before building if you need different organization-specific branding.
+
+## Malware and rootkit protection
+
+The ISO recipe includes Snap-free, apt-based malware protection matching the source desktop pattern:
+
+- ClamAV engine, daemon, and freshclam signature updates
+- ClamTK GUI for manual scans
+- rkhunter and chkrootkit for rootkit checks
+- `/usr/local/sbin/custom-security-scan` helper with `quick`, `full`, `rootkit`, and `smoke` modes
+- Daily quick scan timer at 03:30, weekly full scan timer at Sunday 04:30, and weekly rootkit timer at Sunday 05:30
+- Logs under `/var/log/custom-security/` and quarantine under `/var/quarantine/custom-security/`
+
+The scan helper runs with low CPU/I/O priority and excludes common cache and Steam library paths to reduce desktop/gaming impact.

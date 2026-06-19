@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add ClamAV/ClamTK malware protection plus rkhunter/chkrootkit rootkit scanning to the ISO recipe, with automatic low-priority quick/full/rootkit scan timers and quarantine/log paths.
 - Add Rhythmbox Music as the default music player for common audio file types.
 - Refresh the bundled boot artwork to the latest MI PC no-square radial-glow logo used by the current desktop builds.
 - Update installed desktop defaults to match the latest source-desktop taskbar: bottom Zorin-blue panel, 48px height, flush-left Menu button, and no reserved Show Apps gap.

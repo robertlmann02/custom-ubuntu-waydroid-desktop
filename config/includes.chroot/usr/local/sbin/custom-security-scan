@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MODE="${1:-quick}"
+LOG_DIR=/var/log/custom-security
+QUARANTINE=/var/quarantine/custom-security
+mkdir -p "$LOG_DIR" "$QUARANTINE"
+chmod 700 "$QUARANTINE"
+TS=$(date +%Y%m%d-%H%M%S)
+LOG="$LOG_DIR/${MODE}-${TS}.log"
+LATEST="$LOG_DIR/${MODE}-latest.log"
+exec > >(tee -a "$LOG") 2>&1
+trap 'ln -sfn "$LOG" "$LATEST"' EXIT
+
+echo "custom-security-scan mode=$MODE started=$(date -Is) host=$(hostname)"
+echo "quarantine=$QUARANTINE"
+
+existing_paths() {
+  local p
+  for p in "$@"; do
+    [ -e "$p" ] && printf '%s\0' "$p"
+  done
+}
+
+run_clam_scan() {
+  local label="$1"; shift
+  echo "--- ClamAV $label scan started $(date -Is) ---"
+  # Return code 0=no virus, 1=virus found, >1=error. Do not abort before logging summary.
+  set +e
+  nice -n 15 ionice -c3 clamscan \
+    --recursive=yes \
+    --infected \
+    --bell \
+    --cross-fs=no \
+    --max-filesize=400M \
+    --max-scansize=1200M \
+    --exclude-dir='^/home/[^/]+/\.cache($|/)' \
+    --exclude-dir='^/home/[^/]+/\.steam($|/)' \
+    --exclude-dir='^/home/[^/]+/\.local/share/Steam($|/)' \
+    --exclude-dir='^/mnt/[^/]+/SteamLibrary($|/)' \
+    --exclude-dir='^/mnt/[^/]+/steamapps($|/)' \
+    --move="$QUARANTINE" \
+    "$@"
+  local rc=$?
+  set -e
+  echo "--- ClamAV $label scan finished $(date -Is) rc=$rc ---"
+  if [ "$rc" -gt 1 ]; then
+    echo "ERROR: clamscan returned $rc" >&2
+    return "$rc"
+  fi
+  return 0
+}
+
+case "$MODE" in
+  quick)
+    mapfile -d '' paths < <(existing_paths /home/*/Downloads /home/*/Desktop /home/*/Documents /home/*/Public /media /run/media)
+    if [ "${#paths[@]}" -eq 0 ]; then echo "No quick-scan paths exist"; exit 0; fi
+    run_clam_scan quick "${paths[@]}"
+    ;;
+  full)
+    mapfile -d '' paths < <(existing_paths /home /media /run/media /mnt)
+    if [ "${#paths[@]}" -eq 0 ]; then echo "No full-scan paths exist"; exit 0; fi
+    run_clam_scan full "${paths[@]}"
+    ;;
+  rootkit)
+    echo "--- rkhunter update/propupd/check started $(date -Is) ---"
+    set +e
+    nice -n 15 ionice -c3 rkhunter --update --nocolors
+    rkhunter --propupd --nocolors
+    nice -n 15 ionice -c3 rkhunter --check --sk --nocolors
+    rkh_rc=$?
+    echo "--- rkhunter finished rc=$rkh_rc $(date -Is) ---"
+    echo "--- chkrootkit started $(date -Is) ---"
+    nice -n 15 ionice -c3 chkrootkit -q
+    chk_rc=$?
+    echo "--- chkrootkit finished rc=$chk_rc $(date -Is) ---"
+    set -e
+    # Rootkit tools can return warning codes/false positives; preserve logs but do not break timer chaining.
+    exit 0
+    ;;
+  smoke)
+    TMP=$(mktemp -d)
+    printf 'X5O!P%%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*' > "$TMP/eicar.com"
+    set +e
+    clamscan --infected --move="$QUARANTINE" "$TMP/eicar.com"
+    rc=$?
+    set -e
+    rm -rf "$TMP"
+    echo "smoke_rc=$rc expected_virus_found_rc=1"
+    [ "$rc" -eq 1 ] && echo "SMOKE_TEST_DETECTED_EICAR=yes" && exit 0
+    echo "SMOKE_TEST_FAILED=yes" >&2
+    exit 1
+    ;;
+  *)
+    echo "Usage: $0 {quick|full|rootkit|smoke}" >&2
+    exit 64
+    ;;
+esac
+
+echo "custom-security-scan mode=$MODE completed=$(date -Is)"

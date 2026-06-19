@@ -1,0 +1,10 @@
+[Unit]
+Description=Run Custom desktop ClamAV full scan weekly
+
+[Timer]
+OnCalendar=Sun *-*-* 04:30:00
+Persistent=true
+RandomizedDelaySec=1h
+
+[Install]
+WantedBy=timers.target

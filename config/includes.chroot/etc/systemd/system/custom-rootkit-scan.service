@@ -1,0 +1,8 @@
+[Unit]
+Description=Custom desktop rootkit scan
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/custom-security-scan rootkit
+Nice=15
+IOSchedulingClass=idle
