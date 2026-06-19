@@ -1,6 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" role="img" aria-label="Custom Ubuntu Desktop minimal boot splash">
-  <rect width="1920" height="1080" fill="#020617"/>
-  <polygon points="960,360 1095,438 1095,594 960,672 825,594 825,438" fill="#1c71d8" stroke="#99c1f1" stroke-width="16" stroke-linejoin="round"/>
-  <path d="M895 575 L895 445 L960 515 L1025 445 L1025 575" fill="none" stroke="#ffffff" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
-  <text x="960" y="755" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-size="42" font-weight="600" fill="#e7ecf3">Custom Ubuntu Desktop</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="52%" r="45%">
+      <stop offset="0%" stop-color="#2b0e05"/>
+      <stop offset="46%" stop-color="#100402"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="#000"/>
+  <rect width="1920" height="1080" fill="url(#glow)"/>
+  <g fill="none" stroke="#fff" stroke-width="18" stroke-linejoin="round" transform="translate(575 375)">
+    <polygon points="140,0 280,80 280,240 140,320 0,240 0,80"/>
+  </g>
+  <path d="M642 607 V489 L716 563 L790 489 V607" fill="none" stroke="#fff" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="920" y="578" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="152" font-weight="800" letter-spacing="8">MI PC</text>
+  <text x="920" y="643" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="800" letter-spacing="14">MANNINDUSTRIES PC</text>
 </svg>

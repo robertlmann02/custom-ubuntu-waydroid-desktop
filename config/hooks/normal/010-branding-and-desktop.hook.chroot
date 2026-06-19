@@ -18,11 +18,11 @@ cp -a "$work"/zorin-icon-themes/Zorin* /usr/share/icons/ || true
 gtk-update-icon-cache -q -f /usr/share/icons/ZorinBlue-Dark || true
 rm -rf "$work"
 
-# Install requested default apps: Steam, ONLYOFFICE, and Geary Mail.
+# Install requested default apps: Steam, ONLYOFFICE, Geary Mail, and Rhythmbox Music.
 # Steam needs i386 multiarch before apt can resolve steam-libs-i386.
 dpkg --add-architecture i386 || true
 apt-get update || true
-apt-get install -y steam-installer onlyoffice-desktopeditors geary
+apt-get install -y steam-installer onlyoffice-desktopeditors geary rhythmbox
 
 # System Flatpak/Flathub is configured, but Bottles is not preinstalled now that
 # Steam + ONLYOFFICE are default apps; keeping the Flatpak runtimes out prevents
@@ -42,16 +42,34 @@ cat >/etc/dconf/profile/user <<'DCONF_PROFILE'
 user-db:user
 system-db:local
 DCONF_PROFILE
-# Make Geary the default mail handler for new users and the live session.
+# Make Geary the default mail handler and Rhythmbox the default music player for new users and the live session.
 mkdir -p /etc/xdg /etc/skel/.config
 cat >/etc/xdg/mimeapps.list <<'MIMEAPPS'
 [Default Applications]
 x-scheme-handler/mailto=org.gnome.Geary.desktop
 message/rfc822=org.gnome.Geary.desktop
+audio/mpeg=org.gnome.Rhythmbox3.desktop
+audio/x-mp3=org.gnome.Rhythmbox3.desktop
+audio/mp4=org.gnome.Rhythmbox3.desktop
+audio/flac=org.gnome.Rhythmbox3.desktop
+audio/x-flac=org.gnome.Rhythmbox3.desktop
+audio/ogg=org.gnome.Rhythmbox3.desktop
+audio/x-vorbis+ogg=org.gnome.Rhythmbox3.desktop
+audio/x-wav=org.gnome.Rhythmbox3.desktop
+application/ogg=org.gnome.Rhythmbox3.desktop
 
 [Added Associations]
 x-scheme-handler/mailto=org.gnome.Geary.desktop;
 message/rfc822=org.gnome.Geary.desktop;
+audio/mpeg=org.gnome.Rhythmbox3.desktop;
+audio/x-mp3=org.gnome.Rhythmbox3.desktop;
+audio/mp4=org.gnome.Rhythmbox3.desktop;
+audio/flac=org.gnome.Rhythmbox3.desktop;
+audio/x-flac=org.gnome.Rhythmbox3.desktop;
+audio/ogg=org.gnome.Rhythmbox3.desktop;
+audio/x-vorbis+ogg=org.gnome.Rhythmbox3.desktop;
+audio/x-wav=org.gnome.Rhythmbox3.desktop;
+application/ogg=org.gnome.Rhythmbox3.desktop;
 MIMEAPPS
 cp /etc/xdg/mimeapps.list /etc/skel/.config/mimeapps.list
 
@@ -67,7 +85,7 @@ button-layout='appmenu:minimize,maximize,close'
 
 [org/gnome/shell]
 disable-user-extensions=false
-favorite-apps=['google-chrome.desktop', 'steam.desktop', 'onlyoffice-desktopeditors.desktop', 'org.gnome.Geary.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'org.gnome.Settings.desktop']
+favorite-apps=['google-chrome.desktop', 'org.gnome.Rhythmbox3.desktop', 'steam.desktop', 'onlyoffice-desktopeditors.desktop', 'org.gnome.Geary.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'org.gnome.Settings.desktop']
 DCONF
 dconf update || true
 
@@ -82,23 +100,29 @@ enabled-extensions=['web-search-provider@ubuntu.com', 'arcmenu@arcmenu.com', 'ap
 panel-position='BOTTOM'
 panel-positions={'0':'BOTTOM'}
 panel-lengths={'0':100}
+panel-size=48
+panel-sizes={'0':48}
 intellihide=false
 group-apps=true
 group-apps-use-launchers=true
 trans-use-custom-opacity=true
-trans-panel-opacity=0.28
+trans-panel-opacity=0.72
 trans-use-custom-bg=true
-trans-bg-color='#1d1d1f'
+trans-bg-color='#0b1d2a'
 trans-use-custom-gradient=false
 trans-use-dynamic-opacity=false
 trans-use-border=false
 show-activities-button=false
+show-apps-icon-side-padding=0
+leftbox-padding=0
 
 [org/gnome/shell/extensions/arcmenu]
 menu-layout='windows'
 menu-button-appearance='Icon_Text'
 menu-button-text='Menu'
 force-menu-location='BottomLeft'
+position-in-panel='Left'
+menu-button-padding=0
 override-menu-theme=true
 menu-background-color='rgba(20,20,22,0.42)'
 menu-border-color='rgba(74,144,226,0.32)'
@@ -181,9 +205,7 @@ if not seen_cmd:
     out.append('GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"')
 if not seen_bg:
     out.append('GRUB_BACKGROUND="/boot/grub/custom_boot_1920x1080.png"')
-p.write_text('
-'.join(out)+'
-')
+p.write_text('\n'.join(out)+'\n')
 PY
 fi
 update-initramfs -u || true

@@ -24,6 +24,7 @@ flatpak
 gnome-software
 gnome-software-plugin-flatpak
 geary
+rhythmbox
 
 # Android/Windows app support
 waydroid
