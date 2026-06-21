@@ -5,25 +5,19 @@
 </p>
 
 
-A reproducible Ubuntu-based live desktop image configured like the source GNOME workstation:
+A beginner-friendly Linux desktop ISO for people who are new to Linux but still want a system that feels polished, fast, familiar, and exciting from the first boot. It keeps the strength of Ubuntu underneath, removes common desktop distractions, and presents a ready-to-use desktop with a Windows-like bottom panel, a real Menu button, beautiful custom wallpapers, and practical everyday apps already in place.
 
-- Snap-free by policy (`snapd` and GNOME Software Snap plugin are pinned out)
-- GNOME desktop with Zorin-style themes/icons and bottom-panel/start-menu workflow
-- Custom MI Linux wallpaper collection only; Ubuntu stock wallpapers are removed
-- Waydroid preinstalled
-- Google Chrome as the default browser
-- Microsoft Edge preinstalled
-- Geary Mail as the default mail app (`mailto:` and message files)
-- Rhythmbox Music as the default music app for common audio files
-- ClamAV/ClamTK antivirus plus rkhunter/chkrootkit rootkit scanning, with automatic low-priority timers
-- Steam and ONLYOFFICE Desktop Editors prepackaged
-- GNOME Tweaks and shell extension preferences included for post-install desktop tuning
-- MI PC boot logo assets and Plymouth/GRUB boot branding support
-- Hybrid BIOS plus UEFI Secure Boot-capable USB boot media using signed Ubuntu shim/GRUB
-- Wine, Winetricks, Flatpak, Bottles support for Windows apps
-- GNOME Keyring installed with a blank default keyring password initialized at first login
+## Why new Linux users will want it
 
-The look is built around a dark Zorin-inspired GNOME experience: Zorin Blue Dark GTK and icon themes, a bottom panel, ArcMenu-style application launcher, app indicators, and subtle shell effects for a familiar Windows-like desktop layout while keeping the Ubuntu base. This wallpaper release ships the custom MI Linux wallpaper collection only, removes Ubuntu/GNOME stock wallpapers from the live image, and defaults to the same Linux Vanguard wallpaper used on the source desktop.
+- **Feels familiar immediately:** bottom taskbar, flush-left Menu button, app indicators, and a clean dark desktop layout.
+- **Looks custom, not stock:** ships the custom MI Linux wallpaper collection only; Ubuntu/GNOME stock wallpapers are removed.
+- **Ready for daily use:** Google Chrome, Microsoft Edge, Geary Mail, Rhythmbox Music, Steam, ONLYOFFICE, Wine, Winetricks, and Flatpak support are included.
+- **No Snap clutter:** `snapd` and the GNOME Software Snap plugin are pinned out by policy.
+- **Safer by default:** ClamAV/ClamTK antivirus plus rkhunter/chkrootkit rootkit scanning are included with low-priority automatic timers.
+- **Android app path included:** Waydroid is preinstalled for users who want to explore Android app support on Linux.
+- **Bootable on modern PCs:** hybrid BIOS plus UEFI Secure Boot-capable USB media using signed Ubuntu shim/GRUB.
+
+The look is built around a dark Zorin-inspired GNOME experience: Zorin Blue Dark GTK and icon themes, a bottom panel, ArcMenu-style application launcher, app indicators, and subtle shell effects for a familiar Windows-like desktop layout while keeping the Ubuntu base. This wallpaper release ships the custom MI Linux wallpaper collection only, removes Ubuntu/GNOME stock wallpapers from the live image, and defaults to the Linux Vanguard wallpaper used on the source desktop.
 
 ## Build
 
