@@ -9,6 +9,7 @@ A reproducible Ubuntu-based live desktop image configured like the source GNOME 
 
 - Snap-free by policy (`snapd` and GNOME Software Snap plugin are pinned out)
 - GNOME desktop with Zorin-style themes/icons and bottom-panel/start-menu workflow
+- Custom MI Linux wallpaper collection only; Ubuntu stock wallpapers are removed
 - Waydroid preinstalled
 - Google Chrome as the default browser
 - Microsoft Edge preinstalled
@@ -22,7 +23,7 @@ A reproducible Ubuntu-based live desktop image configured like the source GNOME 
 - Wine, Winetricks, Flatpak, Bottles support for Windows apps
 - GNOME Keyring installed with a blank default keyring password initialized at first login
 
-The look is built around a dark Zorin-inspired GNOME experience: Zorin Blue Dark GTK and icon themes, a bottom panel, ArcMenu-style application launcher, app indicators, and subtle shell effects for a familiar Windows-like desktop layout while keeping the Ubuntu base.
+The look is built around a dark Zorin-inspired GNOME experience: Zorin Blue Dark GTK and icon themes, a bottom panel, ArcMenu-style application launcher, app indicators, and subtle shell effects for a familiar Windows-like desktop layout while keeping the Ubuntu base. This wallpaper release ships the custom MI Linux wallpaper collection only, removes Ubuntu/GNOME stock wallpapers from the live image, and defaults to the same Linux Vanguard wallpaper used on the source desktop.
 
 ## Build
 
@@ -66,7 +67,7 @@ The build recipe includes the current MI PC boot branding assets under:
 config/includes.chroot/usr/local/share/custom-boot-branding/
 ```
 
-The desktop hook installs those assets as a Plymouth theme and GRUB background, sets Geary as the default mail handler, sets Rhythmbox as the default music player, and applies GNOME shell defaults for the bottom Zorin-style taskbar/start-menu workflow, including the flush-left Menu button and hidden Show Apps slot. Replace the bundled boot images before building if you need different organization-specific branding.
+The desktop hook installs those assets as a Plymouth theme and GRUB background, installs the MI Linux wallpaper set under `/usr/share/backgrounds/mann-linux-wallpapers/`, removes Ubuntu/GNOME stock wallpapers from the image, sets the default wallpaper to `2026-06-21-09-06-36-mi_linux_12_linux_vanguard_1920x1080.jpg`, sets Geary as the default mail handler, sets Rhythmbox as the default music player, and applies GNOME shell defaults for the bottom Zorin-style taskbar/start-menu workflow, including the flush-left Menu button and hidden Show Apps slot. Replace the bundled boot images before building if you need different organization-specific branding.
 
 ## Malware and rootkit protection
 
