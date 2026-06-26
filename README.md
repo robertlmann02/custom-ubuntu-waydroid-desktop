@@ -4,7 +4,6 @@
   <img src=".github/assets/mannindustries-logo.png" alt="MannIndustries logo" width="420">
 </p>
 
-
 A beginner-friendly Linux desktop ISO for people who are new to Linux but still want a system that feels polished, fast, familiar, and exciting from the first boot. It keeps the strength of Ubuntu underneath, removes common desktop distractions, and presents a ready-to-use desktop with a Windows-like bottom panel, a real Menu button, beautiful custom wallpapers, and practical everyday apps already in place.
 
 ## Why new Linux users will want it
@@ -15,7 +14,8 @@ A beginner-friendly Linux desktop ISO for people who are new to Linux but still 
 - **No Snap clutter:** `snapd` and the GNOME Software Snap plugin are pinned out by policy.
 - **Safer by default:** ClamAV/ClamTK antivirus plus rkhunter/chkrootkit rootkit scanning are included with low-priority automatic timers.
 - **Android app path included:** Waydroid is preinstalled for users who want to explore Android app support on Linux.
-- **Bootable on modern PCs:** hybrid BIOS plus UEFI Secure Boot-capable USB media using signed Ubuntu shim/GRUB.
+- **Current hardware path:** the live image is pinned to the source desktop's Ubuntu mainline `7.1.1-070101-generic` kernel.
+- **Bootable on modern PCs:** hybrid BIOS plus UEFI-capable USB media using Ubuntu shim/GRUB.
 
 The look is built around a dark Zorin-inspired GNOME experience: Zorin Blue Dark GTK and icon themes, a bottom panel, ArcMenu-style application launcher, app indicators, and subtle shell effects for a familiar Windows-like desktop layout while keeping the Ubuntu base. This wallpaper release ships the custom MI Linux wallpaper collection only, removes Ubuntu/GNOME stock wallpapers from the live image, and defaults to the Linux Vanguard wallpaper used on the source desktop.
 
@@ -31,17 +31,16 @@ sudo apt-get install -y live-build isolinux syslinux-utils grub-pc-bin grub-efi-
 
 Output ISO is written under `out/`.
 
-
 ## Boot compatibility
 
 `scripts/build-iso.sh` post-processes the live-build ISO into hybrid USB media with:
 
 - Legacy BIOS/CSM boot through ISOLINUX
 - UEFI removable-media boot path at `/EFI/BOOT/BOOTX64.EFI`
-- Signed Ubuntu shim and signed GRUB EFI loader for Secure Boot-enabled machines
-- The signed Ubuntu kernel from the live image loaded by GRUB
+- Signed Ubuntu shim and signed GRUB EFI loader for UEFI/Secure Boot-enabled machines
+- The live image kernel loaded by GRUB; current source-desktop-matched builds use an unsigned Ubuntu mainline kernel, so Secure Boot may need to be disabled for that kernel unless you sign/enroll it yourself
 
-Secure Boot still depends on the target firmware trusting the standard Microsoft/Canonical Secure Boot chain.
+Secure Boot still depends on the target firmware trusting the standard Microsoft/Canonical Secure Boot chain and on the kernel being trusted by that chain.
 
 ## Write to USB
 
@@ -61,7 +60,7 @@ The build recipe includes the current MI PC boot branding assets under:
 config/includes.chroot/usr/local/share/custom-boot-branding/
 ```
 
-The desktop hook installs those assets as a Plymouth theme and GRUB background, installs the MI Linux wallpaper set under `/usr/share/backgrounds/mann-linux-wallpapers/`, removes Ubuntu/GNOME stock wallpapers from the image, sets the default wallpaper to `2026-06-21-09-06-36-mi_linux_12_linux_vanguard_1920x1080.jpg`, sets Geary as the default mail handler, sets Rhythmbox as the default music player, and applies GNOME shell defaults for the bottom Zorin-style taskbar/start-menu workflow, including the flush-left Menu button and hidden Show Apps slot. Replace the bundled boot images before building if you need different organization-specific branding.
+The desktop hook installs those assets as a Plymouth theme and GRUB background, installs the bundled MannIndustries wallpaper set under `/usr/share/backgrounds/mannindustries/`, removes stock Ubuntu/GNOME wallpaper payloads and metadata, publishes a custom wallpaper picker XML for the bundled set, defaults both desktop and lock-screen wallpaper to `mi_linux_12_linux_vanguard_1920x1080.jpg`, sets Geary as the default mail handler, sets Rhythmbox as the default music player, and applies GNOME shell defaults for the bottom Zorin-style taskbar/start-menu workflow, including the flush-left Menu button and hidden Show Apps slot. Replace the bundled boot images or wallpaper assets before building if you need different organization-specific branding.
 
 ## Malware and rootkit protection
 

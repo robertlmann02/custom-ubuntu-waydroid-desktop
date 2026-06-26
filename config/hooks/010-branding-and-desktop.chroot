@@ -39,6 +39,35 @@ apt-get install -y \
   rkhunter \
   chkrootkit
 
+# Match the current source-desktop test kernel for the Ubuntu/Waydroid image.
+# Keep linux-generic in the package list for normal Ubuntu fallback/updates, then
+# install the explicit Ubuntu mainline kernel packages used by the target source-desktop build.
+MAINLINE_KERNEL_VERSION="7.1.1-070101"
+MAINLINE_KERNEL_BUILD="7.1.1-070101.202606191302"
+MAINLINE_KERNEL_BASE="https://kernel.ubuntu.com/mainline/v7.1.1/amd64"
+MAINLINE_KERNEL_DEBS=(
+  "linux-headers-${MAINLINE_KERNEL_VERSION}_${MAINLINE_KERNEL_BUILD}_all.deb"
+  "linux-headers-${MAINLINE_KERNEL_VERSION}-generic_${MAINLINE_KERNEL_BUILD}_amd64.deb"
+  "linux-modules-${MAINLINE_KERNEL_VERSION}-generic_${MAINLINE_KERNEL_BUILD}_amd64.deb"
+  "linux-image-unsigned-${MAINLINE_KERNEL_VERSION}-generic_${MAINLINE_KERNEL_BUILD}_amd64.deb"
+)
+mkdir -p /tmp/custom-mainline-kernel
+for deb in "${MAINLINE_KERNEL_DEBS[@]}"; do
+  curl -fL --retry 3 --retry-delay 2 "${MAINLINE_KERNEL_BASE}/${deb}" -o "/tmp/custom-mainline-kernel/${deb}"
+done
+dpkg -i /tmp/custom-mainline-kernel/*.deb || apt-get -f install -y
+update-initramfs -c -k "${MAINLINE_KERNEL_VERSION}-generic" || update-initramfs -u -k "${MAINLINE_KERNEL_VERSION}-generic"
+# live-build's syslinux stage expects a single kernel/initrd pair under binary/live.
+# Remove the repo linux-generic kernel after the source mainline kernel is installed
+# so the final live image boots the same kernel family as the source desktop instead of failing
+# on multiple vmlinuz-* files.
+mapfile -t OLD_KERNEL_PKGS < <(dpkg-query -W -f='${binary:Package}\n' 'linux-image-[0-9]*-generic' 'linux-modules-[0-9]*-generic' 'linux-modules-extra-[0-9]*-generic' 'linux-headers-[0-9]*-generic' 2>/dev/null | grep -v "${MAINLINE_KERNEL_VERSION}" || true)
+if [ "${#OLD_KERNEL_PKGS[@]}" -gt 0 ]; then
+  apt-get purge -y "${OLD_KERNEL_PKGS[@]}"
+fi
+apt-get purge -y linux-generic linux-image-generic linux-headers-generic || true
+rm -rf /tmp/custom-mainline-kernel
+
 # System Flatpak/Flathub is configured, but Bottles is not preinstalled now that
 # Steam + ONLYOFFICE are default apps; keeping the Flatpak runtimes out prevents
 # filesystem.squashfs from exceeding ISO-9660's 4 GiB file limit. Wine remains
@@ -95,6 +124,30 @@ application/ogg=org.gnome.Rhythmbox3.desktop;
 MIMEAPPS
 cp /etc/xdg/mimeapps.list /etc/skel/.config/mimeapps.list
 
+# Keep the wallpaper picker focused on the bundled MannIndustries wallpaper set.
+# Remove stock Ubuntu/GNOME wallpaper payloads and metadata, preserve our custom set,
+# then publish custom wallpaper metadata for GNOME Control Center.
+find /usr/share/backgrounds -mindepth 1 -maxdepth 1 ! -name mannindustries -exec rm -rf {} + || true
+rm -rf /usr/share/gnome-background-properties/* || true
+mkdir -p /usr/share/gnome-background-properties
+{
+  printf '%s\n' '<?xml version="1.0" encoding="UTF-8"?>'
+  printf '%s\n' '<!DOCTYPE wallpapers SYSTEM "gnome-wp-list.dtd">'
+  printf '%s\n' '<wallpapers>'
+  while IFS= read -r image; do
+    name=$(basename "$image" .jpg)
+    printf '%s\n' '  <wallpaper deleted="false">'
+    printf '    <name>%s</name>\n' "$name"
+    printf '    <filename>%s</filename>\n' "$image"
+    printf '%s\n' '    <options>zoom</options>'
+    printf '%s\n' '    <shade_type>solid</shade_type>'
+    printf '%s\n' '    <pcolor>#000000</pcolor>'
+    printf '%s\n' '    <scolor>#000000</scolor>'
+    printf '%s\n' '  </wallpaper>'
+  done < <(find /usr/share/backgrounds/mannindustries -maxdepth 1 -type f -name '*.jpg' | sort)
+  printf '%s\n' '</wallpapers>'
+} >/usr/share/gnome-background-properties/mannindustries-wallpapers.xml
+
 cat >/etc/dconf/db/local.d/00-custom-desktop <<'DCONF'
 [org/gnome/desktop/interface]
 gtk-theme='ZorinBlue-Dark'
@@ -116,6 +169,15 @@ secondary-color='#05070d'
 [org/gnome/desktop/wm/preferences]
 theme='ZorinBlue-Dark'
 button-layout='appmenu:minimize,maximize,close'
+
+[org/gnome/desktop/background]
+picture-uri='file:///usr/share/backgrounds/mannindustries/mi_linux_12_linux_vanguard_1920x1080.jpg'
+picture-uri-dark='file:///usr/share/backgrounds/mannindustries/mi_linux_12_linux_vanguard_1920x1080.jpg'
+picture-options='zoom'
+
+[org/gnome/desktop/screensaver]
+picture-uri='file:///usr/share/backgrounds/mannindustries/mi_linux_12_linux_vanguard_1920x1080.jpg'
+picture-options='zoom'
 
 [org/gnome/shell]
 disable-user-extensions=false
