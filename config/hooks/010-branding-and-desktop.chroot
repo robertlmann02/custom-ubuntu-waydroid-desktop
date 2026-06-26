@@ -6,12 +6,6 @@ export DEBIAN_FRONTEND=noninteractive
 apt-mark hold snapd gnome-software-plugin-snap firefox || true
 rm -rf /snap /var/snap /var/lib/snapd /var/cache/snapd /home/*/snap || true
 
-# Ship only the custom wallpaper set; remove Ubuntu/GNOME stock wallpapers from the live image.
-CUSTOM_WALLPAPER_DIR=/usr/share/backgrounds/mann-linux-wallpapers
-DEFAULT_WALLPAPER=2026-06-21-09-06-36-mi_linux_12_linux_vanguard_1920x1080.jpg
-find /usr/share/backgrounds -mindepth 1 -maxdepth 1 ! -name 'mann-linux-wallpapers' -exec rm -rf {} + || true
-rm -rf /usr/share/gnome-background-properties/*ubuntu* /usr/share/gnome-background-properties/*gnome* 2>/dev/null || true
-
 # Install Zorin theme/icon assets from upstream open repositories.
 work=/tmp/custom-zorin-look
 rm -rf "$work"
@@ -154,18 +148,6 @@ gtk-theme='ZorinBlue-Dark'
 icon-theme='ZorinBlue-Dark'
 color-scheme='prefer-dark'
 
-[org/gnome/desktop/background]
-picture-uri='file:///usr/share/backgrounds/mann-linux-wallpapers/2026-06-21-09-06-36-mi_linux_12_linux_vanguard_1920x1080.jpg'
-picture-uri-dark='file:///usr/share/backgrounds/mann-linux-wallpapers/2026-06-21-09-06-36-mi_linux_12_linux_vanguard_1920x1080.jpg'
-picture-options='zoom'
-primary-color='#0b1d2a'
-secondary-color='#05070d'
-
-[org/gnome/desktop/screensaver]
-picture-uri='file:///usr/share/backgrounds/mann-linux-wallpapers/2026-06-21-09-06-36-mi_linux_12_linux_vanguard_1920x1080.jpg'
-primary-color='#0b1d2a'
-secondary-color='#05070d'
-
 [org/gnome/desktop/wm/preferences]
 theme='ZorinBlue-Dark'
 button-layout='appmenu:minimize,maximize,close'
@@ -174,10 +156,14 @@ button-layout='appmenu:minimize,maximize,close'
 picture-uri='file:///usr/share/backgrounds/mannindustries/mi_linux_12_linux_vanguard_1920x1080.jpg'
 picture-uri-dark='file:///usr/share/backgrounds/mannindustries/mi_linux_12_linux_vanguard_1920x1080.jpg'
 picture-options='zoom'
+primary-color='#0b1d2a'
+secondary-color='#05070d'
 
 [org/gnome/desktop/screensaver]
 picture-uri='file:///usr/share/backgrounds/mannindustries/mi_linux_12_linux_vanguard_1920x1080.jpg'
 picture-options='zoom'
+primary-color='#0b1d2a'
+secondary-color='#05070d'
 
 [org/gnome/shell]
 disable-user-extensions=false
