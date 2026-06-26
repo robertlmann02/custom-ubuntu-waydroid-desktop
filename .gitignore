@@ -23,3 +23,6 @@ binary.hybrid.iso.zsync.xz
 out/*.iso
 out/*.sha256
 out/*.zsync*
+
+# Local Secure Boot signing keys/certs. Never commit private signing keys.
+local/secure-boot/

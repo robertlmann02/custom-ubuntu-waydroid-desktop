@@ -3,6 +3,10 @@ set -euo pipefail
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 cd "$ROOT"
 mkdir -p out
+
+SECURE_BOOT_KEY=${SECURE_BOOT_KEY:-"$ROOT/local/secure-boot/custom-secure-boot.key"}
+SECURE_BOOT_CERT=${SECURE_BOOT_CERT:-"$ROOT/local/secure-boot/custom-secure-boot.crt"}
+SECURE_BOOT_DER=${SECURE_BOOT_DER:-"$ROOT/local/secure-boot/custom-secure-boot.cer"}
 sudo lb clean --purge || true
 lb config \
   --mode ubuntu \
@@ -44,6 +48,29 @@ fi
 sudo cp -f "$ISO" out/custom-ubuntu-waydroid-desktop-amd64.iso
 sudo chown "$(id -u):$(id -g)" out/custom-ubuntu-waydroid-desktop-amd64.iso
 
+
+sign_custom_kernel_if_available() {
+  if [ ! -f "$SECURE_BOOT_KEY" ] || [ ! -f "$SECURE_BOOT_CERT" ]; then
+    echo "Secure Boot kernel signing key/certificate not found; leaving live kernel unsigned." >&2
+    return 0
+  fi
+  command -v sbsign >/dev/null || { echo "sbsign is required for custom kernel signing" >&2; return 1; }
+  command -v sbverify >/dev/null || { echo "sbverify is required for custom kernel signing verification" >&2; return 1; }
+  if [ ! -f binary/live/vmlinuz ]; then
+    echo "Cannot sign Secure Boot kernel: binary/live/vmlinuz is missing" >&2
+    return 1
+  fi
+  echo "Signing live kernel for Secure Boot with $SECURE_BOOT_CERT"
+  sudo cp -f binary/live/vmlinuz binary/live/vmlinuz.unsigned
+  sudo sbsign --key "$SECURE_BOOT_KEY" --cert "$SECURE_BOOT_CERT" --output binary/live/vmlinuz.signed binary/live/vmlinuz.unsigned
+  sudo install -m 0644 binary/live/vmlinuz.signed binary/live/vmlinuz
+  sudo sbverify --cert "$SECURE_BOOT_CERT" binary/live/vmlinuz
+  if [ -f "$SECURE_BOOT_DER" ]; then
+    sudo mkdir -p binary/secure-boot
+    sudo install -m 0644 "$SECURE_BOOT_DER" binary/secure-boot/custom-secure-boot.cer
+  fi
+}
+
 add_secure_boot_efi_support() {
   local output_iso="out/custom-ubuntu-waydroid-desktop-amd64.iso"
   local efi_img="binary/boot/grub/efi.img"
@@ -75,9 +102,14 @@ PYEOF
   sudo mformat -i "$efi_img" -F -v CUSTOM_UBUNTU ::
   sudo mmd -i "$efi_img" ::/EFI ::/EFI/BOOT ::/EFI/ubuntu ::/boot ::/boot/grub
 
+  sign_custom_kernel_if_available
+
   sudo mcopy -i "$efi_img" "$shim_efi" ::/EFI/BOOT/BOOTX64.EFI
   sudo mcopy -i "$efi_img" "$grub_efi" ::/EFI/BOOT/grubx64.efi
   sudo mcopy -i "$efi_img" "$mok_efi" ::/EFI/BOOT/mmx64.efi
+  if [ -f "$SECURE_BOOT_DER" ]; then
+    sudo mcopy -i "$efi_img" "$SECURE_BOOT_DER" ::/EFI/BOOT/custom-secure-boot.cer
+  fi
 
   # Also expose the removable-media EFI path in the ISO filesystem. Some
   # firmware can boot the El Torito EFI image directly, while other USB boot
@@ -86,6 +118,9 @@ PYEOF
   sudo install -m 0644 "$shim_efi" binary/EFI/BOOT/BOOTX64.EFI
   sudo install -m 0644 "$grub_efi" binary/EFI/BOOT/grubx64.efi
   sudo install -m 0644 "$mok_efi" binary/EFI/BOOT/mmx64.efi
+  if [ -f "$SECURE_BOOT_DER" ]; then
+    sudo install -m 0644 "$SECURE_BOOT_DER" binary/EFI/BOOT/custom-secure-boot.cer
+  fi
 
   grub_cfg=$(mktemp)
   cat > "$grub_cfg" <<'EOF'

@@ -38,7 +38,7 @@ Output ISO is written under `out/`.
 - Legacy BIOS/CSM boot through ISOLINUX
 - UEFI removable-media boot path at `/EFI/BOOT/BOOTX64.EFI`
 - Signed Ubuntu shim and signed GRUB EFI loader for UEFI/Secure Boot-enabled machines
-- The live image kernel loaded by GRUB; current source-desktop-matched builds use an unsigned Ubuntu mainline kernel, so Secure Boot may need to be disabled for that kernel unless you sign/enroll it yourself
+- The live image kernel loaded by GRUB; source-desktop-matched mainline kernels can be signed locally with `sbsign` and a Machine Owner Key (MOK) so Secure Boot works after the public MOK certificate is enrolled
 
 Secure Boot still depends on the target firmware trusting the standard Microsoft/Canonical Secure Boot chain and on the kernel being trusted by that chain.
 
@@ -74,3 +74,29 @@ The ISO recipe includes Snap-free, apt-based malware protection matching the sou
 - Logs under `/var/log/custom-security/` and quarantine under `/var/quarantine/custom-security/`
 
 The scan helper runs with low CPU/I/O priority and excludes common cache and Steam library paths to reduce desktop/gaming impact.
+
+## Custom Secure Boot kernel signing
+
+The source-desktop-matched mainline kernel is not Canonical-signed, so ordinary Secure Boot firmware will not trust it automatically. To make Secure Boot work, create a local Machine Owner Key (MOK), keep the private key outside git, sign the live kernel during ISO post-processing, and enroll the public `.cer` on each target PC.
+
+```bash
+./scripts/generate-secure-boot-key.sh
+./scripts/build-iso.sh
+```
+
+By default the build script looks for:
+
+```text
+local/secure-boot/custom-secure-boot.key
+local/secure-boot/custom-secure-boot.crt
+local/secure-boot/custom-secure-boot.cer
+```
+
+If those files exist, `scripts/build-iso.sh` signs `binary/live/vmlinuz`, verifies the signature with `sbverify`, and copies the public enrollment certificate into the ISO at:
+
+```text
+/secure-boot/custom-secure-boot.cer
+/EFI/BOOT/custom-secure-boot.cer
+```
+
+Keep `custom-secure-boot.key` private. On the target PC, enroll `custom-secure-boot.cer` through MokManager or `mokutil --import custom-secure-boot.cer`, then boot the USB with Secure Boot enabled.
