@@ -10,6 +10,7 @@ A reproducible Ubuntu-based live desktop image configured like the source GNOME 
 - Snap-free by policy (`snapd` and GNOME Software Snap plugin are pinned out)
 - GNOME desktop with Zorin-style themes/icons and bottom-panel/start-menu workflow
 - Waydroid preinstalled
+- Source-desktop-matched Ubuntu mainline `7.1.1-070101-generic` kernel baked into the live image
 - Google Chrome as the default browser
 - Microsoft Edge preinstalled
 - Geary Mail as the default mail app (`mailto:` and message files)
@@ -17,7 +18,7 @@ A reproducible Ubuntu-based live desktop image configured like the source GNOME 
 - ClamAV/ClamTK antivirus plus rkhunter/chkrootkit rootkit scanning, with automatic low-priority timers
 - Steam and ONLYOFFICE Desktop Editors prepackaged
 - GNOME Tweaks and shell extension preferences included for post-install desktop tuning
-- MI PC boot logo assets and Plymouth/GRUB boot branding support
+- MI PC boot logo assets, MannIndustries wallpapers, and Plymouth/GRUB boot branding support
 - Hybrid BIOS plus UEFI Secure Boot-capable USB boot media using signed Ubuntu shim/GRUB
 - Wine, Winetricks, Flatpak, Bottles support for Windows apps
 - GNOME Keyring installed with a blank default keyring password initialized at first login
@@ -44,7 +45,7 @@ Output ISO is written under `out/`.
 - Legacy BIOS/CSM boot through ISOLINUX
 - UEFI removable-media boot path at `/EFI/BOOT/BOOTX64.EFI`
 - Signed Ubuntu shim and signed GRUB EFI loader for Secure Boot-enabled machines
-- The signed Ubuntu kernel from the live image loaded by GRUB
+- The live image kernel loaded by GRUB; current source-desktop-matched builds use an unsigned Ubuntu mainline kernel, so Secure Boot may need to be disabled for that kernel unless you sign/enroll it yourself
 
 Secure Boot still depends on the target firmware trusting the standard Microsoft/Canonical Secure Boot chain.
 
@@ -66,7 +67,7 @@ The build recipe includes the current MI PC boot branding assets under:
 config/includes.chroot/usr/local/share/custom-boot-branding/
 ```
 
-The desktop hook installs those assets as a Plymouth theme and GRUB background, sets Geary as the default mail handler, sets Rhythmbox as the default music player, and applies GNOME shell defaults for the bottom Zorin-style taskbar/start-menu workflow, including the flush-left Menu button and hidden Show Apps slot. Replace the bundled boot images before building if you need different organization-specific branding.
+The desktop hook installs those assets as a Plymouth theme and GRUB background, installs the bundled MannIndustries wallpaper set under `/usr/share/backgrounds/mannindustries/`, defaults both desktop and lock-screen wallpaper to `mi_linux_12_linux_vanguard_1920x1080.jpg`, sets Geary as the default mail handler, sets Rhythmbox as the default music player, and applies GNOME shell defaults for the bottom Zorin-style taskbar/start-menu workflow, including the flush-left Menu button and hidden Show Apps slot. Replace the bundled boot images or wallpaper assets before building if you need different organization-specific branding.
 
 ## Malware and rootkit protection
 

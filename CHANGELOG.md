@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Match the source desktop's current `7.1.1-070101-generic` mainline kernel in the live image by downloading the Ubuntu mainline v7.1.1 amd64 kernel packages during the chroot hook.
+- Bundle the 43-file MannIndustries wallpaper set from the source wallpaper set and default the desktop/lock screen to `mi_linux_12_linux_vanguard_1920x1080.jpg`, matching the current source GNOME wallpaper.
 - Add UEFI Secure Boot-capable USB boot support with signed Ubuntu shim/GRUB, visible `/EFI/BOOT/BOOTX64.EFI`, and an El Torito EFI system partition while preserving legacy ISOLINUX boot.
 - Add ClamAV/ClamTK malware protection plus rkhunter/chkrootkit rootkit scanning to the ISO recipe, with automatic low-priority quick/full/rootkit scan timers and quarantine/log paths.
 - Add Rhythmbox Music as the default music player for common audio file types.
