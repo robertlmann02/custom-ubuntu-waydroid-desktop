@@ -14,7 +14,7 @@ A beginner-friendly Linux desktop ISO for people who are new to Linux but still 
 - **No Snap clutter:** `snapd` and the GNOME Software Snap plugin are pinned out by policy.
 - **Safer by default:** ClamAV/ClamTK antivirus plus rkhunter/chkrootkit rootkit scanning are included with low-priority automatic timers.
 - **Android app path included:** Waydroid is preinstalled for users who want to explore Android app support on Linux.
-- **Current hardware path:** the live image is pinned to the source desktop's Ubuntu mainline `7.1.1-070101-generic` kernel.
+- **Waydroid-compatible kernel path:** the live image is pinned to Ubuntu generic `7.0.0-27-generic`, because the newer mainline `7.1.1-070101-generic` kernel lacks Android binder support needed by Waydroid.
 - **Bootable on modern PCs:** hybrid BIOS plus UEFI-capable USB media using Ubuntu shim/GRUB.
 
 The look is built around a dark Zorin-inspired GNOME experience: Zorin Blue Dark GTK and icon themes, a bottom panel, ArcMenu-style application launcher, app indicators, and subtle shell effects for a familiar Windows-like desktop layout while keeping the Ubuntu base. This wallpaper release ships the custom MI Linux wallpaper collection only, removes Ubuntu/GNOME stock wallpapers from the live image, and defaults to the Linux Vanguard wallpaper used on the source desktop.
@@ -38,9 +38,9 @@ Output ISO is written under `out/`.
 - Legacy BIOS/CSM boot through ISOLINUX
 - UEFI removable-media boot path at `/EFI/BOOT/BOOTX64.EFI`
 - Signed Ubuntu shim and signed GRUB EFI loader for UEFI/Secure Boot-enabled machines
-- The live image kernel loaded by GRUB; source-desktop-matched mainline kernels can be signed locally with `sbsign` and a Machine Owner Key (MOK) so Secure Boot works after the public MOK certificate is enrolled
+- The live image kernel loaded by GRUB; the default pinned Ubuntu generic `7.0.0-27-generic` kernel uses Ubuntu's signed kernel path for normal Secure Boot-capable PCs
 
-Secure Boot still depends on the target firmware trusting the standard Microsoft/Canonical Secure Boot chain and on the kernel being trusted by that chain.
+Secure Boot still depends on the target firmware trusting the standard Microsoft/Canonical Secure Boot chain.
 
 ## Write to USB
 
@@ -75,9 +75,9 @@ The ISO recipe includes Snap-free, apt-based malware protection matching the sou
 
 The scan helper runs with low CPU/I/O priority and excludes common cache and Steam library paths to reduce desktop/gaming impact.
 
-## Custom Secure Boot kernel signing
+## Optional custom Secure Boot kernel signing
 
-The source-desktop-matched mainline kernel is not Canonical-signed, so ordinary Secure Boot firmware will not trust it automatically. To make Secure Boot work, create a local Machine Owner Key (MOK), keep the private key outside git, sign the live kernel during ISO post-processing, and enroll the public `.cer` on each target PC.
+The default recipe is pinned to Ubuntu generic `7.0.0-27-generic` for Waydroid binder support. If you later switch the recipe back to a custom/mainline kernel that is not Canonical-signed, create a local Machine Owner Key (MOK), keep the private key outside git, sign the live kernel during ISO post-processing, and enroll the public `.cer` on each target PC.
 
 ```bash
 ./scripts/generate-secure-boot-key.sh
@@ -92,11 +92,11 @@ local/secure-boot/custom-secure-boot.crt
 local/secure-boot/custom-secure-boot.cer
 ```
 
-If those files exist, `scripts/build-iso.sh` signs `binary/live/vmlinuz`, verifies the signature with `sbverify`, and copies the public enrollment certificate into the ISO at:
+If those files exist for a custom/mainline kernel build, `scripts/build-iso.sh` signs `binary/live/vmlinuz`, verifies the signature with `sbverify`, and copies the public enrollment certificate into the ISO at:
 
 ```text
 /secure-boot/custom-secure-boot.cer
 /EFI/BOOT/custom-secure-boot.cer
 ```
 
-Keep `custom-secure-boot.key` private. On the target PC, enroll `custom-secure-boot.cer` through MokManager or `mokutil --import custom-secure-boot.cer`, then boot the USB with Secure Boot enabled.
+Keep `custom-secure-boot.key` private. Only custom/mainline kernel builds need MOK enrollment; the default Ubuntu generic 7.0.0-27 kernel path should not require this extra enrollment step.

@@ -2,8 +2,9 @@
 
 ## Unreleased
 
-- Add optional local Secure Boot kernel signing for the custom mainline kernel, including a MOK certificate copy in the ISO when local signing key material is present.
-- Match the source desktop's current `7.1.1-070101-generic` mainline kernel in the live image by downloading the Ubuntu mainline v7.1.1 amd64 kernel packages during the chroot hook.
+- Downgrade/pin the ISO kernel recipe to Ubuntu generic `7.0.0-27-generic` because Waydroid cannot use the newer mainline `7.1.1-070101-generic` kernel without Android binder support.
+- Add a persistent Waydroid binder setup service that loads `binder_linux`, mounts binderfs, and creates the `/dev/anbox-*` device links Waydroid expects.
+- Keep optional local Secure Boot signing support only for future custom/mainline kernel builds; the default Waydroid-compatible Ubuntu generic kernel path no longer requires the MOK workaround.
 - Wallpaper release: add the 43-file custom MI Linux wallpaper collection, remove Ubuntu/GNOME stock wallpapers from the live image, set Linux Vanguard as the default desktop/lock-screen wallpaper, and refresh the GitHub wording for new Linux users who want a polished first-boot experience.
 - Add UEFI Secure Boot-capable USB boot support with signed Ubuntu shim/GRUB, visible `/EFI/BOOT/BOOTX64.EFI`, and an El Torito EFI system partition while preserving legacy ISOLINUX boot.
 - Add ClamAV/ClamTK malware protection plus rkhunter/chkrootkit rootkit scanning to the ISO recipe, with automatic low-priority quick/full/rootkit scan timers and quarantine/log paths.

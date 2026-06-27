@@ -33,34 +33,34 @@ apt-get install -y \
   rkhunter \
   chkrootkit
 
-# Match the current source-desktop test kernel for the Ubuntu/Waydroid image.
-# Keep linux-generic in the package list for normal Ubuntu fallback/updates, then
-# install the explicit Ubuntu mainline kernel packages used by the target source-desktop build.
-MAINLINE_KERNEL_VERSION="7.1.1-070101"
-MAINLINE_KERNEL_BUILD="7.1.1-070101.202606191302"
-MAINLINE_KERNEL_BASE="https://kernel.ubuntu.com/mainline/v7.1.1/amd64"
-MAINLINE_KERNEL_DEBS=(
-  "linux-headers-${MAINLINE_KERNEL_VERSION}_${MAINLINE_KERNEL_BUILD}_all.deb"
-  "linux-headers-${MAINLINE_KERNEL_VERSION}-generic_${MAINLINE_KERNEL_BUILD}_amd64.deb"
-  "linux-modules-${MAINLINE_KERNEL_VERSION}-generic_${MAINLINE_KERNEL_BUILD}_amd64.deb"
-  "linux-image-unsigned-${MAINLINE_KERNEL_VERSION}-generic_${MAINLINE_KERNEL_BUILD}_amd64.deb"
-)
-mkdir -p /tmp/custom-mainline-kernel
-for deb in "${MAINLINE_KERNEL_DEBS[@]}"; do
-  curl -fL --retry 3 --retry-delay 2 "${MAINLINE_KERNEL_BASE}/${deb}" -o "/tmp/custom-mainline-kernel/${deb}"
-done
-dpkg -i /tmp/custom-mainline-kernel/*.deb || apt-get -f install -y
-update-initramfs -c -k "${MAINLINE_KERNEL_VERSION}-generic" || update-initramfs -u -k "${MAINLINE_KERNEL_VERSION}-generic"
+# Pin the live image to the Ubuntu generic kernel known to support Waydroid's
+# Android binder devices on the source desktop. The newer mainline 7.1.1 kernel
+# lacks CONFIG_ANDROID_BINDER_IPC, which leaves /dev/anbox-binder missing and
+# makes Waydroid start with Session RUNNING but Container STOPPED.
+WAYDROID_KERNEL_VERSION="7.0.0-27"
+WAYDROID_KERNEL_FLAVOR="${WAYDROID_KERNEL_VERSION}-generic"
+WAYDROID_KERNEL_PACKAGE_VERSION="7.0.0-27.27"
+apt-get update || true
+apt-get install -y --allow-downgrades \
+  "linux-generic=${WAYDROID_KERNEL_PACKAGE_VERSION}" \
+  "linux-image-generic=${WAYDROID_KERNEL_PACKAGE_VERSION}" \
+  "linux-headers-generic=${WAYDROID_KERNEL_PACKAGE_VERSION}" \
+  "linux-image-${WAYDROID_KERNEL_FLAVOR}=${WAYDROID_KERNEL_PACKAGE_VERSION}" \
+  "linux-modules-${WAYDROID_KERNEL_FLAVOR}=${WAYDROID_KERNEL_PACKAGE_VERSION}" \
+  "linux-headers-${WAYDROID_KERNEL_VERSION}=${WAYDROID_KERNEL_PACKAGE_VERSION}" \
+  "linux-headers-${WAYDROID_KERNEL_FLAVOR}=${WAYDROID_KERNEL_PACKAGE_VERSION}"
+update-initramfs -c -k "${WAYDROID_KERNEL_FLAVOR}" || update-initramfs -u -k "${WAYDROID_KERNEL_FLAVOR}"
 # live-build's syslinux stage expects a single kernel/initrd pair under binary/live.
-# Remove the repo linux-generic kernel after the source mainline kernel is installed
-# so the final live image boots the same kernel family as the source desktop instead of failing
-# on multiple vmlinuz-* files.
-mapfile -t OLD_KERNEL_PKGS < <(dpkg-query -W -f='${binary:Package}\n' 'linux-image-[0-9]*-generic' 'linux-modules-[0-9]*-generic' 'linux-modules-extra-[0-9]*-generic' 'linux-headers-[0-9]*-generic' 2>/dev/null | grep -v "${MAINLINE_KERNEL_VERSION}" || true)
+# Remove any other generic kernels so the final live image boots the Waydroid-capable
+# Ubuntu generic kernel instead of a newer mainline/non-binder kernel.
+mapfile -t OLD_KERNEL_PKGS < <(dpkg-query -W -f='${binary:Package}\n' 'linux-image-[0-9]*-generic' 'linux-image-unsigned-[0-9]*-generic' 'linux-modules-[0-9]*-generic' 'linux-modules-extra-[0-9]*-generic' 'linux-headers-[0-9]*-generic' 2>/dev/null | grep -v "${WAYDROID_KERNEL_FLAVOR}" | grep -v "linux-headers-${WAYDROID_KERNEL_VERSION}$" || true)
 if [ "${#OLD_KERNEL_PKGS[@]}" -gt 0 ]; then
   apt-get purge -y "${OLD_KERNEL_PKGS[@]}"
 fi
-apt-get purge -y linux-generic linux-image-generic linux-headers-generic || true
-rm -rf /tmp/custom-mainline-kernel
+
+# Prepare Android binder devices for Waydroid on installed systems. The live
+# session can also run this helper before starting Waydroid.
+systemctl enable waydroid-binder-setup.service || true
 
 # System Flatpak/Flathub is configured, but Bottles is not preinstalled now that
 # Steam + ONLYOFFICE are default apps; keeping the Flatpak runtimes out prevents

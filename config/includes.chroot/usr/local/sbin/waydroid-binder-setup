@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+modprobe binder_linux devices=anbox-binder,anbox-hwbinder,anbox-vndbinder
+mkdir -p /dev/binderfs
+if ! mountpoint -q /dev/binderfs; then
+  mount -t binder binder /dev/binderfs
+fi
+ln -sf /dev/binderfs/anbox-binder /dev/anbox-binder
+ln -sf /dev/binderfs/anbox-hwbinder /dev/anbox-hwbinder
+ln -sf /dev/binderfs/anbox-vndbinder /dev/anbox-vndbinder
+chmod 666 /dev/binderfs/anbox-binder /dev/binderfs/anbox-hwbinder /dev/binderfs/anbox-vndbinder || true
