@@ -1,7 +1,5 @@
-Package: linux-generic linux-image-generic linux-headers-generic linux-image-7.0.0-27-generic linux-modules-7.0.0-27-generic linux-headers-7.0.0-27 linux-headers-7.0.0-27-generic
-Pin: version 7.0.0-27.27
-Pin-Priority: 1001
-
+# Do not allow the known-bad stock mainline 7.1.1 generic packages into the ISO.
+# The recipe builds/stages linux-image-7.1.1-070101-waydroid-070101-waydroid locally.
 Package: linux-image-unsigned-7.1.1-070101-generic linux-modules-7.1.1-070101-generic linux-headers-7.1.1-070101-generic linux-headers-7.1.1-070101
 Pin: version *
 Pin-Priority: -1

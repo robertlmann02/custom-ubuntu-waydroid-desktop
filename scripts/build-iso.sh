@@ -7,6 +7,39 @@ mkdir -p out
 SECURE_BOOT_KEY=${SECURE_BOOT_KEY:-"$ROOT/local/secure-boot/custom-secure-boot.key"}
 SECURE_BOOT_CERT=${SECURE_BOOT_CERT:-"$ROOT/local/secure-boot/custom-secure-boot.crt"}
 SECURE_BOOT_DER=${SECURE_BOOT_DER:-"$ROOT/local/secure-boot/custom-secure-boot.cer"}
+
+prepare_waydroid_kernel_packages() {
+  mkdir -p config/packages.chroot
+  if ! compgen -G "$ROOT/local/kernel-debs/linux-image-7.1.1-070101-waydroid-*.deb" >/dev/null; then
+    echo "Waydroid 7.1.1 kernel packages missing; building them now."
+    echo "This can take a while on the first run."
+    "$ROOT/scripts/build-waydroid-kernel.sh"
+  fi
+  rm -f config/packages.chroot/linux-image-*waydroid*.deb \
+        config/packages.chroot/linux-headers-*waydroid*.deb \
+        config/packages.chroot/linux-libc-dev_*waydroid*.deb
+  cp -f "$ROOT"/local/kernel-debs/*.deb config/packages.chroot/
+  echo "Waydroid kernel packages staged for live-build:"
+  ls -lh config/packages.chroot/*waydroid*.deb config/packages.chroot/linux-libc-dev_*waydroid*.deb 2>/dev/null || true
+}
+
+ensure_custom_secure_boot_key() {
+  if [ -f "$SECURE_BOOT_KEY" ] && [ -f "$SECURE_BOOT_CERT" ] && [ -f "$SECURE_BOOT_DER" ]; then
+    return 0
+  fi
+  if [ -e "$SECURE_BOOT_KEY" ] || [ -e "$SECURE_BOOT_CERT" ] || [ -e "$SECURE_BOOT_DER" ]; then
+    echo "Incomplete Secure Boot key material under local/secure-boot/." >&2
+    echo "Keep any private .key safe, then restore the missing .crt/.cer or move the partial set aside before rebuilding." >&2
+    exit 1
+  fi
+  echo "Custom 7.1.1 Waydroid kernel selected; generating local MOK key material for Secure Boot signing."
+  echo "The private key stays under local/secure-boot/ and is ignored by git."
+  "$ROOT/scripts/generate-secure-boot-key.sh"
+}
+
+prepare_waydroid_kernel_packages
+ensure_custom_secure_boot_key
+
 sudo lb clean --purge || true
 lb config \
   --mode ubuntu \

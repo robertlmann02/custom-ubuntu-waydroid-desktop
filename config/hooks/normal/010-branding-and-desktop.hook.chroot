@@ -33,29 +33,21 @@ apt-get install -y \
   rkhunter \
   chkrootkit
 
-# Pin the live image to the Ubuntu generic kernel known to support Waydroid's
-# Android binder devices on the source desktop. The newer mainline 7.1.1 kernel
-# lacks CONFIG_ANDROID_BINDER_IPC, which leaves /dev/anbox-binder missing and
-# makes Waydroid start with Session RUNNING but Container STOPPED.
-WAYDROID_KERNEL_VERSION="7.0.0-27"
-WAYDROID_KERNEL_FLAVOR="${WAYDROID_KERNEL_VERSION}-generic"
-WAYDROID_KERNEL_PACKAGE_VERSION="7.0.0-27.27"
-apt-get update || true
-apt-get install -y --allow-downgrades \
-  "linux-generic=${WAYDROID_KERNEL_PACKAGE_VERSION}" \
-  "linux-image-generic=${WAYDROID_KERNEL_PACKAGE_VERSION}" \
-  "linux-headers-generic=${WAYDROID_KERNEL_PACKAGE_VERSION}" \
-  "linux-image-${WAYDROID_KERNEL_FLAVOR}=${WAYDROID_KERNEL_PACKAGE_VERSION}" \
-  "linux-modules-${WAYDROID_KERNEL_FLAVOR}=${WAYDROID_KERNEL_PACKAGE_VERSION}" \
-  "linux-headers-${WAYDROID_KERNEL_VERSION}=${WAYDROID_KERNEL_PACKAGE_VERSION}" \
-  "linux-headers-${WAYDROID_KERNEL_FLAVOR}=${WAYDROID_KERNEL_PACKAGE_VERSION}"
+# Use hardware-tested 7.1.1 Waydroid kernel packages staged by scripts/build-iso.sh.
+# Stock mainline 7.1.1-070101-generic lacks Android binder support; this custom
+# flavor enables CONFIG_ANDROID_BINDER_IPC=y and CONFIG_ANDROID_BINDERFS=y.
+WAYDROID_KERNEL_FLAVOR="7.1.1-070101-waydroid-070101-waydroid"
+if ! dpkg-query -W -f='${Status}\n' "linux-image-${WAYDROID_KERNEL_FLAVOR}" 2>/dev/null | grep -q 'install ok installed'; then
+  echo "Expected Waydroid kernel package linux-image-${WAYDROID_KERNEL_FLAVOR} is not installed." >&2
+  echo "Run scripts/build-iso.sh from the repository root so it can build/stage local kernel packages first." >&2
+  exit 1
+fi
 update-initramfs -c -k "${WAYDROID_KERNEL_FLAVOR}" || update-initramfs -u -k "${WAYDROID_KERNEL_FLAVOR}"
 # live-build's syslinux stage expects a single kernel/initrd pair under binary/live.
-# Remove any other generic kernels so the final live image boots the Waydroid-capable
-# Ubuntu generic kernel instead of a newer mainline/non-binder kernel.
-mapfile -t OLD_KERNEL_PKGS < <(dpkg-query -W -f='${binary:Package}\n' 'linux-image-[0-9]*-generic' 'linux-image-unsigned-[0-9]*-generic' 'linux-modules-[0-9]*-generic' 'linux-modules-extra-[0-9]*-generic' 'linux-headers-[0-9]*-generic' 2>/dev/null | grep -v "${WAYDROID_KERNEL_FLAVOR}" | grep -v "linux-headers-${WAYDROID_KERNEL_VERSION}$" || true)
+# Remove other generic kernels so the final live image boots the tested binder-capable kernel.
+mapfile -t OLD_KERNEL_PKGS < <(dpkg-query -W -f='${binary:Package}\n' 'linux-image-[0-9]*' 'linux-image-unsigned-[0-9]*' 'linux-modules-[0-9]*' 'linux-modules-extra-[0-9]*' 'linux-headers-[0-9]*' 2>/dev/null | grep -v "${WAYDROID_KERNEL_FLAVOR}" || true)
 if [ "${#OLD_KERNEL_PKGS[@]}" -gt 0 ]; then
-  apt-get purge -y "${OLD_KERNEL_PKGS[@]}"
+  apt-get purge -y "${OLD_KERNEL_PKGS[@]}" || true
 fi
 
 # Prepare Android binder devices for Waydroid on installed systems. The live

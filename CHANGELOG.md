@@ -2,11 +2,12 @@
 
 ## Unreleased
 
+- Update the ISO recipe to build and stage the hardware-tested custom `7.1.1-070101-waydroid-070101-waydroid` kernel with Android binder/binderfs support, plus local MOK Secure Boot signing for that custom kernel.
 - Rename the ArcMenu/Menu taskbar label from `Menu` to `Linux` next to the MI emblem.
 - Replace the ArcMenu/Menu taskbar icon with the MannIndustries MI shield/emblem artwork.
-- Downgrade/pin the ISO kernel recipe to Ubuntu generic `7.0.0-27-generic` because Waydroid cannot use the newer mainline `7.1.1-070101-generic` kernel without Android binder support.
+- Document that stock `7.1.1-070101-generic` is blocked because it lacks binder, while the custom 7.1.1 Waydroid flavor is used for future builds.
 - Add a persistent Waydroid binder setup service that loads `binder_linux`, mounts binderfs, and creates the `/dev/anbox-*` device links Waydroid expects.
-- Keep optional local Secure Boot signing support only for future custom/mainline kernel builds; the default Waydroid-compatible Ubuntu generic kernel path no longer requires the MOK workaround.
+- Use local MOK Secure Boot signing for the custom 7.1.1 Waydroid kernel while keeping private key material out of git.
 - Wallpaper release: add the 43-file custom MI Linux wallpaper collection, remove Ubuntu/GNOME stock wallpapers from the live image, set Linux Vanguard as the default desktop/lock-screen wallpaper, and refresh the GitHub wording for new Linux users who want a polished first-boot experience.
 - Add UEFI Secure Boot-capable USB boot support with signed Ubuntu shim/GRUB, visible `/EFI/BOOT/BOOTX64.EFI`, and an El Torito EFI system partition while preserving legacy ISOLINUX boot.
 - Add ClamAV/ClamTK malware protection plus rkhunter/chkrootkit rootkit scanning to the ISO recipe, with automatic low-priority quick/full/rootkit scan timers and quarantine/log paths.

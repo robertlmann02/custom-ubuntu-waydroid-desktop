@@ -14,7 +14,7 @@ A beginner-friendly Linux desktop ISO for people who are new to Linux but still 
 - **No Snap clutter:** `snapd` and the GNOME Software Snap plugin are pinned out by policy.
 - **Safer by default:** ClamAV/ClamTK antivirus plus rkhunter/chkrootkit rootkit scanning are included with low-priority automatic timers.
 - **Android app path included:** Waydroid is preinstalled for users who want to explore Android app support on Linux.
-- **Waydroid-compatible kernel path:** the live image is pinned to Ubuntu generic `7.0.0-27-generic`, because the newer mainline `7.1.1-070101-generic` kernel lacks Android binder support needed by Waydroid.
+- **Waydroid-compatible 7.1.1 kernel:** the build creates a custom `7.1.1-070101-waydroid-070101-waydroid` kernel with Android binder support enabled, matching the kernel tested successfully on the source desktop.
 - **Bootable on modern PCs:** hybrid BIOS plus UEFI-capable USB media using Ubuntu shim/GRUB.
 
 The look is built around a dark Zorin-inspired GNOME experience: Zorin Blue Dark GTK and icon themes, a bottom panel, ArcMenu-style application launcher, app indicators, and subtle shell effects for a familiar Windows-like desktop layout while keeping the Ubuntu base. This wallpaper release ships the custom MI Linux wallpaper collection only, removes Ubuntu/GNOME stock wallpapers from the live image, and defaults to the Linux Vanguard wallpaper used on the source desktop.
@@ -25,11 +25,13 @@ On an Ubuntu host with sudo:
 
 ```bash
 sudo apt-get update
-sudo apt-get install -y live-build isolinux syslinux-utils grub-pc-bin grub-efi-amd64-signed shim-signed xorriso squashfs-tools debootstrap mtools dosfstools curl jq git
+sudo apt-get install -y live-build isolinux syslinux-utils grub-pc-bin grub-efi-amd64-signed shim-signed xorriso squashfs-tools debootstrap mtools dosfstools curl jq git build-essential bc bison flex libssl-dev libelf-dev libdw-dev dwarves debhelper fakeroot xz-utils sbsigntool
 ./scripts/build-iso.sh
 ```
 
 Output ISO is written under `out/`.
+
+The first build also compiles the custom Waydroid kernel from kernel.org source using `config/kernel/7.1.1-070101-generic.config` as the base config. Built `.deb` packages are stored under `local/kernel-debs/` and are intentionally ignored by git.
 
 ## Boot compatibility
 
@@ -38,9 +40,9 @@ Output ISO is written under `out/`.
 - Legacy BIOS/CSM boot through ISOLINUX
 - UEFI removable-media boot path at `/EFI/BOOT/BOOTX64.EFI`
 - Signed Ubuntu shim and signed GRUB EFI loader for UEFI/Secure Boot-enabled machines
-- The live image kernel loaded by GRUB; the default pinned Ubuntu generic `7.0.0-27-generic` kernel uses Ubuntu's signed kernel path for normal Secure Boot-capable PCs
+- The live image kernel loaded by GRUB; the custom Waydroid 7.1.1 kernel is signed locally during the build when the generated MOK key is present
 
-Secure Boot still depends on the target firmware trusting the standard Microsoft/Canonical Secure Boot chain.
+Secure Boot still depends on the target firmware trusting the standard Microsoft/Canonical Secure Boot chain and, for the custom Waydroid kernel, the user enrolling the generated public MOK certificate included on the ISO.
 
 ## Write to USB
 
@@ -77,7 +79,7 @@ The scan helper runs with low CPU/I/O priority and excludes common cache and Ste
 
 ## Optional custom Secure Boot kernel signing
 
-The default recipe is pinned to Ubuntu generic `7.0.0-27-generic` for Waydroid binder support. If you later switch the recipe back to a custom/mainline kernel that is not Canonical-signed, create a local Machine Owner Key (MOK), keep the private key outside git, sign the live kernel during ISO post-processing, and enroll the public `.cer` on each target PC.
+The recipe uses a custom 7.1.1 Waydroid kernel, so Secure Boot requires local Machine Owner Key (MOK) signing. `scripts/build-iso.sh` will generate local MOK key material if it is missing, keep the private key outside git, sign the live kernel during ISO post-processing, and copy the public `.cer` into the ISO for enrollment on target PCs.
 
 ```bash
 ./scripts/generate-secure-boot-key.sh
@@ -92,11 +94,11 @@ local/secure-boot/custom-secure-boot.crt
 local/secure-boot/custom-secure-boot.cer
 ```
 
-If those files exist for a custom/mainline kernel build, `scripts/build-iso.sh` signs `binary/live/vmlinuz`, verifies the signature with `sbverify`, and copies the public enrollment certificate into the ISO at:
+For this custom kernel build, `scripts/build-iso.sh` signs `binary/live/vmlinuz`, verifies the signature with `sbverify`, and copies the public enrollment certificate into the ISO at:
 
 ```text
 /secure-boot/custom-secure-boot.cer
 /EFI/BOOT/custom-secure-boot.cer
 ```
 
-Keep `custom-secure-boot.key` private. Only custom/mainline kernel builds need MOK enrollment; the default Ubuntu generic 7.0.0-27 kernel path should not require this extra enrollment step.
+Keep `custom-secure-boot.key` private. New users only need the public `.cer` file during the one-time MOK enrollment flow on Secure Boot PCs.

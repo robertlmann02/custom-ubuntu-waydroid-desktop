@@ -26,3 +26,6 @@ out/*.zsync*
 
 # Local Secure Boot signing keys/certs. Never commit private signing keys.
 local/secure-boot/
+local/kernel-build/
+local/kernel-debs/
+config/packages.chroot/*.deb
