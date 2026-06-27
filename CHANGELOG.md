@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Replace the ArcMenu/Menu taskbar icon with the MannIndustries MI shield/emblem artwork.
 - Downgrade/pin the ISO kernel recipe to Ubuntu generic `7.0.0-27-generic` because Waydroid cannot use the newer mainline `7.1.1-070101-generic` kernel without Android binder support.
 - Add a persistent Waydroid binder setup service that loads `binder_linux`, mounts binderfs, and creates the `/dev/anbox-*` device links Waydroid expects.
 - Keep optional local Secure Boot signing support only for future custom/mainline kernel builds; the default Waydroid-compatible Ubuntu generic kernel path no longer requires the MOK workaround.
