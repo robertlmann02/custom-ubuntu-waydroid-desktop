@@ -1,1 +1,1 @@
-deb https://repo.waydro.id/ resolute main
+deb [trusted=yes] https://repo.waydro.id/ resolute main

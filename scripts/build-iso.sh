@@ -59,6 +59,8 @@ lb config \
   --mirror-binary http://archive.ubuntu.com/ubuntu/ \
   --security false \
   --apt-recommends true \
+  --apt-secure false \
+  --apt-options "--yes -o Acquire::AllowInsecureRepositories=true -o APT::Get::AllowUnauthenticated=true" \
   --memtest none \
   --iso-application "Custom Ubuntu Waydroid Desktop" \
   --iso-publisher "Custom Ubuntu Waydroid Desktop" \
