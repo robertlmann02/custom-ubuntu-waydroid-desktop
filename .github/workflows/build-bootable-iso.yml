@@ -1,0 +1,40 @@
+name: Build bootable ISO
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-iso:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y live-build isolinux syslinux-utils grub-pc-bin grub-efi-amd64-signed shim-signed xorriso squashfs-tools debootstrap mtools dosfstools curl jq git build-essential bc bison flex libssl-dev libelf-dev libdw-dev dwarves debhelper fakeroot xz-utils sbsigntool
+
+      - name: Build ISO from GitHub source
+        run: |
+          ./scripts/build-iso.sh
+          test -f out/custom-ubuntu-waydroid-desktop-amd64.iso
+          sha256sum -c out/custom-ubuntu-waydroid-desktop-amd64.iso.sha256
+
+      - name: Split ISO for portable download
+        run: |
+          mkdir -p out/release-parts
+          cp out/custom-ubuntu-waydroid-desktop-amd64.iso.sha256 out/release-parts/
+          split -b 1900M -d --numeric-suffixes=1 --suffix-length=2 \
+            out/custom-ubuntu-waydroid-desktop-amd64.iso \
+            out/release-parts/custom-ubuntu-waydroid-desktop-amd64.iso.part
+          ls -lh out/release-parts
+
+      - name: Upload bootable ISO parts
+        uses: actions/upload-artifact@v4
+        with:
+          name: bootable-iso-parts
+          path: out/release-parts/
+          if-no-files-found: error
+          retention-days: 14

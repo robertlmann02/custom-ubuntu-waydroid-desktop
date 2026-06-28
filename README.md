@@ -44,15 +44,32 @@ The first build also compiles the custom Waydroid kernel from kernel.org source 
 
 Secure Boot still depends on the target firmware trusting the standard Microsoft/Canonical Secure Boot chain and, for the custom Waydroid kernel, the user enrolling the generated public MOK certificate included on the ISO.
 
-## Write to USB
+## Create a bootable USB
 
-Use `lsblk` to identify the removable USB disk, then:
+For a normal user on Windows, macOS, or Linux, use the cross-platform helper documented in:
+
+```text
+docs/CREATE-BOOTABLE-USB.md
+```
+
+Short version after you have either downloaded the GitHub Actions artifact or built the ISO locally:
+
+```bash
+python3 scripts/usb_boot_media.py --list
+python3 scripts/usb_boot_media.py --parts-dir <UNZIPPED_ARTIFACT_DIR> --target <USB_DISK>
+# or, if you built the ISO locally:
+python3 scripts/usb_boot_media.py --iso out/custom-ubuntu-waydroid-desktop-amd64.iso --target <USB_DISK>
+```
+
+The helper can reassemble split ISO parts, verify the SHA256 checksum, and write the selected whole USB disk after an `OVERWRITE` confirmation.
+
+If you already built the ISO locally on Ubuntu, you can still use the original Linux-only writer:
 
 ```bash
 sudo ./scripts/write-usb.sh out/custom-ubuntu-waydroid-desktop-amd64.iso /dev/sdX
 ```
 
-**Warning:** this overwrites the target disk.
+**Warning:** USB writing overwrites the whole target disk.
 
 ## Branding and defaults
 
