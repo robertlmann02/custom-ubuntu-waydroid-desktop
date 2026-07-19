@@ -57,5 +57,6 @@ syslinux-utils
 plymouth-label
 
 # Default productivity/gaming launchers are installed in the branding hook:
-# - steam-installer needs i386 multiarch enabled first
+# - steam-launcher comes from Valve's direct Steam repository after i386 is enabled
+# - gamescope comes from Ubuntu multiverse for per-game Steam launch options
 # - onlyoffice-desktopeditors comes from the ONLYOFFICE repo

@@ -10,7 +10,7 @@ A beginner-friendly Linux desktop ISO for people who are new to Linux but still 
 
 - **Feels familiar immediately:** bottom taskbar, flush-left Menu button, app indicators, and a clean dark desktop layout.
 - **Looks custom, not stock:** ships the custom MI Linux wallpaper collection only; Ubuntu/GNOME stock wallpapers are removed.
-- **Ready for daily use:** Google Chrome, Microsoft Edge, Geary Mail, Rhythmbox Music, Steam, ONLYOFFICE, Wine, Winetricks, and Flatpak support are included.
+- **Ready for daily use:** Google Chrome, Microsoft Edge, Geary Mail, Rhythmbox Music, Valve direct Steam, Gamescope, ONLYOFFICE, Wine, Winetricks, and Flatpak support are included.
 - **No Snap clutter:** `snapd` and the GNOME Software Snap plugin are pinned out by policy.
 - **Safer by default:** ClamAV/ClamTK antivirus plus rkhunter/chkrootkit rootkit scanning are included with low-priority automatic timers.
 - **Android app path included:** Waydroid is preinstalled for users who want to explore Android app support on Linux.
@@ -79,7 +79,7 @@ The build recipe includes the current MI PC boot branding assets under:
 config/includes.chroot/usr/local/share/custom-boot-branding/
 ```
 
-The desktop hook installs those assets as a Plymouth theme and GRUB background, installs the bundled MannIndustries wallpaper set under `/usr/share/backgrounds/mannindustries/`, removes stock Ubuntu/GNOME wallpaper payloads and metadata, publishes a custom wallpaper picker XML for the bundled set, defaults both desktop and lock-screen wallpaper to `mi_linux_12_linux_vanguard_1920x1080.jpg`, sets Geary as the default mail handler, sets Rhythmbox as the default music player, and applies GNOME shell defaults for the bottom Zorin-style taskbar/start-menu workflow, including the flush-left Menu button and hidden Show Apps slot. Replace the bundled boot images or wallpaper assets before building if you need different organization-specific branding.
+The desktop hook installs those assets as a Plymouth theme and GRUB background, installs the bundled MannIndustries wallpaper set under `/usr/share/backgrounds/mannindustries/`, removes stock Ubuntu/GNOME wallpaper payloads and metadata, publishes a custom wallpaper picker XML for the bundled set, defaults both desktop and lock-screen wallpaper to `mi_linux_12_linux_vanguard_1920x1080.jpg`, sets Geary as the default mail handler, sets Rhythmbox as the default music player, installs Valve direct Steam with Gamescope support for per-game compositor launch options, and applies GNOME shell defaults for the bottom Zorin-style taskbar/start-menu workflow, including the flush-left Menu button and hidden Show Apps slot. Replace the bundled boot images or wallpaper assets before building if you need different organization-specific branding.
 
 ## Malware and rootkit protection
 

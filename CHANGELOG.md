@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Switch preinstalled Steam from Ubuntu `steam-installer` to Valve direct `steam-launcher`, add Valve's Steam apt repository, and include Gamescope for per-game Steam launch options while preserving the dedicated Steam library path pattern.
 - Add a GitHub Actions ISO build workflow plus cross-platform USB creation helper/documentation so Windows, macOS, and Linux users can create bootable media from the repository workflow.
 - Update the ISO recipe to build and stage the hardware-tested custom `7.1.1-070101-waydroid-070101-waydroid` kernel with Android binder/binderfs support, plus local MOK Secure Boot signing for that custom kernel.
 - Rename the ArcMenu/Menu taskbar label from `Menu` to `Linux` next to the MI emblem.
