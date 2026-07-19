@@ -36,6 +36,16 @@ apt-get install -y \
   rkhunter \
   chkrootkit
 
+# Valve's package installs its own signed-by Steam apt source. Remove the temporary
+# live-build archive source afterward so apt does not see duplicate Steam entries
+# with conflicting Trusted/signed-by options during later live-build cleanup.
+for source_file in /etc/apt/sources.list.d/*.list /etc/apt/sources.list; do
+  [ -e "$source_file" ] || continue
+  if grep -q 'repo.steampowered.com/steam/' "$source_file" && grep -q 'trusted=yes' "$source_file"; then
+    rm -f "$source_file"
+  fi
+done
+
 # Use hardware-tested 7.1.1 Waydroid kernel packages staged by scripts/build-iso.sh.
 # Stock mainline 7.1.1-070101-generic lacks Android binder support; this custom
 # flavor enables CONFIG_ANDROID_BINDER_IPC=y and CONFIG_ANDROID_BINDERFS=y.
