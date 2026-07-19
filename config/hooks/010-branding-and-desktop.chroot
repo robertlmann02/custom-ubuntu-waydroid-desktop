@@ -36,15 +36,12 @@ apt-get install -y \
   rkhunter \
   chkrootkit
 
-# Valve's package installs its own signed-by Steam apt source. Remove the temporary
-# live-build archive source afterward so apt does not see duplicate Steam entries
-# with conflicting Trusted/signed-by options during later live-build cleanup.
-for source_file in /etc/apt/sources.list.d/*.list /etc/apt/sources.list; do
-  [ -e "$source_file" ] || continue
-  if grep -q 'repo.steampowered.com/steam/' "$source_file" && grep -q 'trusted=yes' "$source_file"; then
-    rm -f "$source_file"
-  fi
-done
+# Valve's package installs its own signed-by Steam apt source. Live-build also
+# adds the same Steam repo from config/archives during later chroot/binary stages.
+# Keep live-build's archive source as the single source of truth and remove the
+# package-installed Valve source files to avoid conflicting Trusted/signed-by apt
+# options for https://repo.steampowered.com/steam/ stable.
+rm -f /etc/apt/sources.list.d/steam-stable.list /etc/apt/sources.list.d/steam-beta.list
 
 # Use hardware-tested 7.1.1 Waydroid kernel packages staged by scripts/build-iso.sh.
 # Stock mainline 7.1.1-070101-generic lacks Android binder support; this custom
